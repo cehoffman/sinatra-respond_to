@@ -61,18 +61,21 @@ Due to the way respond\_to works, all incoming requests have the extension strip
 This causes routes like the following to fail.
 
     get '/style.css' do
+      content_type :css, :charset => 'utf-8'
       sass :style   # => renders views/style.sass
     end
     
 They need to be changed to the following
 
     get '/style' do
+      content_type :css, :charset => 'utf-8'
       sass :style   # => renders views/style.css.sass
     end
     
 If you want to ensure the route only gets called for css requests try this
 
     get '/style', :provides => :css do
+      content_type :css, :charset => 'utf-8'
       sass :style
     end
 
