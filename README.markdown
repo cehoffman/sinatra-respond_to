@@ -3,8 +3,9 @@
 
 ## Examples
 
+    require 'sinatra'
     require 'sinatra/respond_to'
-    register Sinatra::RespondTo
+    register Sinatra::RespondTo         # => Due to bug in sinatra for classic applications and extensions, see Issues
     
     get '/posts' do
       @posts = Posts.recent
