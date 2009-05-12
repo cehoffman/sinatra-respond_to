@@ -8,7 +8,7 @@
     register Sinatra::RespondTo         # => Due to bug in sinatra for classic applications and extensions, see Issues
     
     get '/posts' do
-      @posts = Posts.recent
+      @posts = Post.recent
       
       respond_to do |wants|
         wants.html { haml :posts }      # => views/posts.html.haml, also sets content_type to text/html
@@ -29,7 +29,7 @@
     end
     
     get '/comments/:id' do
-      @comment = Comments.find(params[:id])
+      @comment = Comment.find(params[:id])
       
       respond_to do |wants|
         wants.html { haml :comment }    # => views/comment.html.haml, also sets content_type to text/html
