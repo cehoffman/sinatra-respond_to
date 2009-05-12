@@ -5,7 +5,6 @@
 
     require 'sinatra'
     require 'sinatra/respond_to'
-    register Sinatra::RespondTo         # => Due to bug in sinatra for classic applications and extensions, see Issues
     
     get '/posts' do
       @posts = Post.recent
@@ -80,8 +79,8 @@ If you want to ensure the route only gets called for css requests try this
 ## Issues
 
 Sinatra has a bug that affects Classic style applications and extensions see [#215][215] and [#180][180].
-For this reason you'll have explicitly register Sinatra::RespondTo for classic applications just like for
-non-classic applications.
+I have worked around this by explicitly registering RespondTo with the top level Sinatra::Application when
+requiring sinatra/respond\_to.
 
 [215]: https://sinatra.lighthouseapp.com/projects/9779/tickets/215-extensions-cannot-define-before-filters-for-classic-apps "Extensions cannot define before filters for classic apps"
 [180]: https://sinatra.lighthouseapp.com/projects/9779/tickets/180-better-route-inheritence "Better route inheritence"
