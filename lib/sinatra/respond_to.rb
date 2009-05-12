@@ -172,7 +172,7 @@ module Sinatra
         raise UnhandledFormat  if handler.nil?
         
         opts = [format]
-        opts << {:charset => options.default_charset} if TEXT_MIME_TYPES.include? format
+        opts << {:charset => options.default_charset} if TEXT_MIME_TYPES.include? format && response['Content-Type'] !~ /charset=/
 
         content_type *opts
         
