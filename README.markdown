@@ -14,6 +14,7 @@
         wants.html { haml :posts }      # => views/posts.html.haml, also sets content_type to text/html
         wants.rss { haml :posts }       # => views/posts.rss.haml, also sets content_type to application/rss+xml
         wants.atom { haml :posts }      # => views/posts.atom.haml, also sets content_type to appliation/atom+xml
+      end
     end
 
     get '/post/:id' do
