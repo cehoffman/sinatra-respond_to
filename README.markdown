@@ -65,17 +65,15 @@ This causes routes like the following to fail.
       sass :style   # => renders views/style.sass
     end
     
-They need to be changed to the following
+They need to be changed to the following.  Note that you don longer have to set the content\_type or charset
 
     get '/style' do
-      content_type :css, :charset => 'utf-8'
       sass :style   # => renders views/style.css.sass
     end
     
 If you want to ensure the route only gets called for css requests try this
 
     get '/style', :provides => :css do
-      content_type :css, :charset => 'utf-8'
       sass :style
     end
 

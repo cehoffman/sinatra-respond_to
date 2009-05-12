@@ -44,6 +44,8 @@ module Sinatra
 
           # For the oh so common case of actually wanting Javascript from an XmlHttpRequest
           format :js if request.xhr? && options.assume_xhr_is_js?
+
+          content_type format
         end
       end
 
@@ -179,10 +181,7 @@ module Sinatra
         handler = wants[format]
         raise UnhandledFormat  if handler.nil?
 
-        opts = [format]
-        opts << {:charset => options.default_charset} if TEXT_MIME_TYPES.include? format && response['Content-Type'] !~ /charset=/
-
-        content_type *opts
+        content_type format, :charset => options.default_charset if TEXT_MIME_TYPES.include? format && response['Content-Type'] !~ /charset=/
 
         handler.call
       end
