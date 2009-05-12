@@ -55,7 +55,7 @@ There a few options available for configuring the default behavior of respond_to
     in the response.
 
 ## Installing
-Coming soon...
+    sudo gem install cehoffman-sinatra-respond_to --source=http://gems.github.com
 
 ## Cavaets
 Due to the way respond\_to works, all incoming requests have the extension striped from the request.path\_info.
