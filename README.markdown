@@ -65,7 +65,7 @@ This causes routes like the following to fail.
       sass :style   # => renders views/style.sass
     end
     
-They need to be changed to the following.  Note that you don longer have to set the content\_type or charset
+They need to be changed to the following.  Note that you no longer have to set the content\_type or charset.
 
     get '/style' do
       sass :style   # => renders views/style.css.sass
