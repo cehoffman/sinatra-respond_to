@@ -42,19 +42,39 @@
 There a few options available for configuring the default behavior of respond_to using Sinatra's
 <tt>set</tt> utility.
 
-* <tt>default_charset - utf-8</tt>
+* <tt>default\_charset - utf-8</tt><br />
     Assumes all text documents are encoded using this character set.
     This can be overridden within the respond_to block for the appropriate format
-* <tt>default_content - :html</tt>
+* <tt>default\_content - :html</tt><br />
     When a user vists a url without an extension, for example /post this will be
     the assumed content to serve first.  Expects a symbol as used in setting content_type.
-* <tt>assume_xhr_is_js - true</tt>
+* <tt>assume\_xhr\_is\_js - true</tt><br />
     To avoid headaches with accept headers, and appending .js to urls, this will
     cause the default format for all XmlHttpRequests to be classified as wanting Javascript
     in the response.
 
 ## Installing
 Coming soon...
+
+## Cavaets
+Due to the way respond\_to works, all incoming requests have the extension striped from the request.path\_info.
+This causes routes like the following to fail.
+
+    get '/style.css' do
+      sass :style   # => renders views/style.sass
+    end
+    
+They need to be changed to the following
+
+    get '/style' do
+      sass :style   # => renders views/style.css.sass
+    end
+    
+If you want to ensure the route only gets called for css requests try this
+
+    get '/style', :provides => :css do
+      sass :style
+    end
 
 ## Issues
 
@@ -64,3 +84,4 @@ non-classic applications.
 
 [215]: https://sinatra.lighthouseapp.com/projects/9779/tickets/215-extensions-cannot-define-before-filters-for-classic-apps "Extensions cannot define before filters for classic apps"
 [180]: https://sinatra.lighthouseapp.com/projects/9779/tickets/180-better-route-inheritence "Better route inheritence"
+
