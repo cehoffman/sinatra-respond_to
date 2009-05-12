@@ -41,7 +41,7 @@ module Sinatra
         unless options.static? && options.public? && ["GET", "HEAD"].include?(request.request_method) && static_file?(unescape(request.path_info))
           request.path_info.gsub! %r{\.([^\./]+)$}, ''
           format $1 || options.default_content
-          
+
           # For the oh so common case of actually wanting Javascript from an XmlHttpRequest
           format :js if request.xhr? && options.assume_xhr_is_js?
         end
@@ -92,6 +92,7 @@ module Sinatra
 
           engine = request.env['sinatra.error'].message[/\.([^\.]+)$/, 1]
           path = request.path_info[/([^\/]+)$/, 1]
+          path = "root" if path.nil? || path.empty?
 
           layout = case engine
                    when 'haml' then "!!!\n%html\n  %body= yield"
@@ -133,14 +134,21 @@ module Sinatra
 
       app.class_eval do
         private
-          def lookup_template_with_format(*args)
+          def render_with_format(*args)
             args[1] = "#{args[1]}.#{format}".to_sym
-            lookup_template_without_format *args
+            render_without_format *args
           rescue Errno::ENOENT
             raise MissingTemplate, "#{args[1]}.#{args[0]}"
           end
-          alias_method :lookup_template_without_format, :lookup_template
-          alias_method :lookup_template, :lookup_template_with_format
+          alias_method :render_without_format, :render
+          alias_method :render, :render_with_format
+
+          def lookup_layout_with_format(*args)
+            args[1] = "#{args[1]}.#{format}".to_sym if args
+            lookup_layout_without_format *args
+          end
+          alias_method :lookup_layout_without_format, :lookup_layout
+          alias_method :lookup_layout, :lookup_layout_with_format
       end
     end
 
@@ -170,16 +178,16 @@ module Sinatra
 
         handler = wants[format]
         raise UnhandledFormat  if handler.nil?
-        
+
         opts = [format]
         opts << {:charset => options.default_charset} if TEXT_MIME_TYPES.include? format && response['Content-Type'] !~ /charset=/
 
         content_type *opts
-        
+
         handler.call
       end
     end
   end
 
-  register RespondTo
+  Sinatra::Application.register RespondTo
 end

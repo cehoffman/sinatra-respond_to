@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sinatra-respond_to}
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Hoffman"]
-  s.date = %q{2009-05-11}
+  s.date = %q{2009-05-12}
   s.description = %q{A respond_to style Rails block for baked-in web service support in Sinatra}
   s.email = %q{cehoffman@gmail.com}
   s.extra_rdoc_files = [
@@ -32,11 +32,11 @@ Gem::Specification.new do |s|
     s.specification_version = 2
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<sinatra>, [">= 0.9.1.1"])
+      s.add_runtime_dependency(%q<sinatra-sinatra>, [">= 0.9.1.3"])
     else
-      s.add_dependency(%q<sinatra>, [">= 0.9.1.1"])
+      s.add_dependency(%q<sinatra-sinatra>, [">= 0.9.1.3"])
     end
   else
-    s.add_dependency(%q<sinatra>, [">= 0.9.1.1"])
+    s.add_dependency(%q<sinatra-sinatra>, [">= 0.9.1.3"])
   end
 end
