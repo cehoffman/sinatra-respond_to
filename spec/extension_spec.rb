@@ -1,6 +1,10 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Sinatra::RespondTo do
+  def media_type(sym)
+    Sinatra::Base.media_type(sym)
+  end
+
   describe "options" do
     it "should initialize with :default_charset set to 'utf-8'" do
       TestApp.default_charset.should == 'utf-8'
@@ -21,7 +25,7 @@ describe Sinatra::RespondTo do
 
       get '/resource'
 
-      last_response['Content-Type'].should =~ %r{#{Rack::Mime.mime_type(".js")}}
+      last_response['Content-Type'].should =~ %r{#{media_type(:js)}}
     end
 
     it "should not set the content type to application/javascript for an XMLHttpRequest when assume_xhr_is_js is false" do
@@ -29,7 +33,7 @@ describe Sinatra::RespondTo do
       header 'HTTP_X_REQUESTED_WITH', 'XMLHttpRequest'
       get '/resource'
 
-      last_response['Content-Type'].should_not =~ %r{#{Rack::Mime.mime_type(".js")}}
+      last_response['Content-Type'].should_not =~ %r{#{media_type(:js)}}
 
       # Put back the option, no side effects here
       TestApp.enable :assume_xhr_is_js
@@ -72,7 +76,7 @@ describe Sinatra::RespondTo do
     it "should set the appropriate content-type for route with an extension" do
       get "/resource.xml"
 
-      last_response['Content-Type'].should =~ %r{#{Rack::Mime.mime_type('.xml')}}
+      last_response['Content-Type'].should =~ %r{#{media_type(:xml)}}
     end
 
     it "should set the character set to the default character set" do
@@ -137,7 +141,7 @@ describe Sinatra::RespondTo do
     it "should set the default content type when no extension" do
       get "/normal-no-respond_to"
 
-      last_response['Content-Type'].should =~ %r{#{Rack::Mime.mime_type(".#{TestApp.default_content}")}}
+      last_response['Content-Type'].should =~ %r{#{media_type(TestApp.default_content)}}
     end
 
     it "should set the default character when no extension" do
@@ -149,13 +153,13 @@ describe Sinatra::RespondTo do
     it "should set the appropriate content type when given an extension" do
       get "/normal-no-respond_to.css"
 
-      last_response['Content-Type'].should =~ %r{#{Rack::Mime.mime_type(".css")}}
+      last_response['Content-Type'].should =~ %r{#{media_type(:css)}}
     end
 
     it "should set the default charset when given an extension" do
       get "/normal-no-respond_to.css"
 
-      last_response['Content-Type'].should =~ %r{#{Rack::Mime.mime_type(".css")}}
+      last_response['Content-Type'].should =~ %r{#{media_type(:css)}}
     end
   end
 
@@ -280,17 +284,13 @@ describe Sinatra::RespondTo do
 
     describe "format" do
       before(:each) do
-        stub!(:request).and_return(Rack::Request.new({}))
-      end
-
-      def media_type(sym)
-        Sinatra::Base.media_type(sym)
+        stub!(:request).and_return(Sinatra::Request.new({}))
       end
 
       it "should set the correct mime type when given an extension" do
         format :xml
 
-        response['Content-Type'].split(';').should include(Rack::Mime.mime_type(".xml"))
+        response['Content-Type'].split(';').should include(media_type(:xml))
       end
 
       it "should fail when set to an unknown extension type" do
@@ -334,6 +334,30 @@ describe Sinatra::RespondTo do
 
       it "should return false when the path is for a folder" do
         static_file?(@static_folder).should be_false
+      end
+    end
+
+    describe "respond_to" do
+      before(:each) do
+        stub!(:request).and_return(Sinatra::Request.new({}))
+      end
+
+      it "should fail for an unknown extension" do
+        lambda do
+          respond_to do |wants|
+            wants.bogus
+          end
+        end.should raise_error
+      end
+
+      it "should call the block corresponding to the current format" do
+        format :html
+
+        respond_to do |wants|
+          wants.js { "Some JS" }
+          wants.html { "Some HTML" }
+          wants.xml { "Some XML" }
+        end.should == "Some HTML"
       end
     end
   end

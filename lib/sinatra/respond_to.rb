@@ -97,12 +97,12 @@ module Sinatra
 
           engine = request.env['sinatra.error'].message[/\.([^\.]+)$/, 1]
           engine = 'haml' unless ['haml', 'builder', 'erb'].include? engine
-          
+
           path = request.path_info[/([^\/]+)$/, 1]
           path = "root" if path.nil? || path.empty?
-          
+
           format = engine == 'builder' ? 'xml' : 'html'
-          
+
           layout = case engine
                    when 'haml' then "!!!\n%html\n  %body= yield"
                    when 'erb' then "<html>\n  <body>\n    <%= yield %>\n  </body>\n</html>"
@@ -199,7 +199,6 @@ module Sinatra
         wants = {}
         def wants.method_missing(type, *args, &block)
           Sinatra::Base.send(:fail, "Unknown media type for respond_to: #{type}\nTry registering the extension with a mime type") if Sinatra::Base.media_type(type).nil?
-          options = args.pop if args.last.is_a?(::Hash)
           self[type] = block
         end
 
