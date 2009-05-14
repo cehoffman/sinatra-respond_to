@@ -164,6 +164,12 @@ describe Sinatra::RespondTo do
   end
 
   describe "error pages in development:" do
+    it "should allow access to the /__sinatra__/*.png images" do
+      get '/__sinatra__/404.png'
+
+      last_response.should be_ok
+    end
+
     describe Sinatra::RespondTo::MissingTemplate do
       it "should return 500 status when looking for a missing template" do
         get '/missing-template'
