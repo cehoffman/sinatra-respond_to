@@ -5,10 +5,10 @@
 
     require 'sinatra'
     require 'sinatra/respond_to'
-    
+
     get '/posts' do
       @posts = Post.recent
-      
+
       respond_to do |wants|
         wants.html { haml :posts }      # => views/posts.html.haml, also sets content_type to text/html
         wants.rss { haml :posts }       # => views/posts.rss.haml, also sets content_type to application/rss+xml
@@ -18,7 +18,7 @@
 
     get '/post/:id' do
       @post = Post.find(params[:id])
-      
+
       respond_to do |wants|
         wants.html { haml :post }       # => views/post.html.haml, also sets content_type to text/html
         wants.xhtml { haml :post }      # => views/post.xhtml.haml, also sets content_type to application/xhtml+xml
@@ -26,14 +26,28 @@
         wants.js { erb :post }          # => views/post.js.erb, also sets content_type to application/javascript
       end
     end
-    
+
     get '/comments/:id' do
       @comment = Comment.find(params[:id])
-      
+
       respond_to do |wants|
         wants.html { haml :comment }    # => views/comment.html.haml, also sets content_type to text/html
         wants.json { @comment.to_json } # => sets content_type to application/json
         wants.js { erb :comment }       # => views/comment.js.erb, also sets content_type to application/javascript
+      end
+    end
+
+To change the character set of the response, there is a <tt>charset</tt> helper.  For example
+
+    get '/iso-8859-1' do
+      charset 'iso-8859-1'
+      "This is now sent using iso-8859-1 character set"
+    end
+
+    get '/respond_to-mixed' do
+      respond_to do |wants|
+        wants.html { charset 'iso-8859-1'; "Some html in iso-8859-1" }
+        wants.xml { builder :utf-8-xml }    # => this is returned in the default character set
       end
     end
 
@@ -64,14 +78,14 @@ This causes routes like the following to fail.
       content_type :css, :charset => 'utf-8'
       sass :style   # => renders views/style.sass
     end
-    
+
 They need to be changed to the following.  Note that you no longer have to set the content\_type or charset.
 
     get '/style' do
       sass :style   # => renders views/style.css.sass
     end
-    
-If you want to ensure the route only gets called for css requests try this
+
+If you want to ensure the route only gets called for css requests try this.  This will use sinatra's built in accept header matching.
 
     get '/style', :provides => :css do
       sass :style
