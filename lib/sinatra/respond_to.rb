@@ -1,6 +1,6 @@
 require 'sinatra/base'
 
-# Simple note, accept header parsing was looked at but deamed
+# Accept header parsing was looked at but deemed
 # too much of an irregularity to deal with.  Problems with the header
 # differences from IE, Firefox, Safari, and every other UA causes
 # problems with the expected output.  The general expected behavior
@@ -48,14 +48,6 @@ module Sinatra
           charset options.default_charset if TEXT_MIME_TYPES.include? format
         end
       end
-
-      # Replace all routes that have an ending extension with one that doesn't
-      # Most generally a fix for the __sinatra__ routes in development
-      # app.routes.each_pair do |verb, subroutes|
-      #   subroutes.each do |subroute|
-      #     subroute[0] = Regexp.new(subroute[0].source.gsub(/\\\.[^\.\/]+\$$/, '$'))
-      #   end
-      # end
 
      app.configure :development do
         # Very, very, very hackish but only for development at least
@@ -178,8 +170,8 @@ module Sinatra
       def static_file?(path)
         public_dir = File.expand_path(options.public)
         path = File.expand_path(File.join(public_dir, unescape(path)))
-        return false if path[0, public_dir.length] != public_dir
-        File.file?(path)
+
+        path[0, public_dir.length] == public_dir && File.file?(path)
       end
 
       def charset(val=nil)
