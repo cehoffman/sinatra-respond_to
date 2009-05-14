@@ -163,7 +163,42 @@ describe Sinatra::RespondTo do
     end
   end
 
+  describe "error pages in production" do
+    class ProductionErrorApp < Sinatra::Base
+      set :environment, :production
+      register Sinatra::RespondTo
+      get '/missing-template' do
+        respond_to do |wants|
+          wants.html { haml :missing }
+        end
+      end
+    end
+
+    before(:each) do
+      @app = Rack::Builder.new { run ProductionErrorApp }
+    end
+
+    describe Sinatra::RespondTo::MissingTemplate do
+      it "should return 404 status when looking for a missing template in production" do
+        get '/missing-template'
+
+        last_response.status.should == 404
+        last_response.body.should_not =~ /Sinatra can't find/
+      end
+    end
+
+    describe Sinatra::RespondTo::UnhandledFormat do
+      it "should return with a 404 when an extension is not supported in production" do
+        get '/missing-template.txt'
+
+        last_response.status.should == 404
+        last_response.body.should_not =~ /respond_to/
+      end
+    end
+  end
+
   describe "error pages in development:" do
+
     it "should allow access to the /__sinatra__/*.png images" do
       get '/__sinatra__/404.png'
 
@@ -175,15 +210,6 @@ describe Sinatra::RespondTo do
         get '/missing-template'
 
         last_response.status.should == 500
-      end
-
-      it "should return 500 status when looking for a missing template in production" do
-        TestApp.set :environment, :production
-        get '/missing-template'
-
-        last_response.status.should == 500
-
-        TestApp.set :environment, :development
       end
 
       it "should provide a helpful error message for a missing template when in development" do
@@ -227,15 +253,6 @@ describe Sinatra::RespondTo do
         get '/missing-template.txt'
 
         last_response.status.should == 404
-      end
-
-      it "should return with a 404 when an extension is not support in production" do
-        TestApp.set :environment, :production
-        get '/missing-template.txt'
-
-        last_response.status.should == 404
-
-        TestApp.set :environment, :development
       end
 
       it "should provide a helpful error message for an unhandled format" do

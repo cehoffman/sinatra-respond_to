@@ -9,7 +9,7 @@ require File.join(File.dirname(__FILE__), 'app', 'test_app')
 
 Spec::Runner.configure do |config|
   def app
-    @app = Rack::Builder.new do
+    @app ||= Rack::Builder.new do
       run TestApp
     end
   end

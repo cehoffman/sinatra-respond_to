@@ -49,14 +49,14 @@ module Sinatra
         end
       end
 
-     app.configure :development do
+     app.configure :development do |dev|
         # Very, very, very hackish but only for development at least
         # Modifies the regex matching /__sinatra__/:image.png to not have the extension
         ["GET", "HEAD"].each do |verb|
-          app.routes[verb][1][0] = Regexp.new(app.routes[verb][1][0].source.gsub(/\\\.[^\.\/]+\$$/, '$'))
+          dev.routes[verb][1][0] = Regexp.new(dev.routes[verb][1][0].source.gsub(/\\\.[^\.\/]+\$$/, '$'))
         end
 
-        app.error UnhandledFormat do
+        dev.error UnhandledFormat do
           content_type :html, :charset => 'utf-8'
 
           (<<-HTML).gsub(/^ {10}/, '')
@@ -81,9 +81,9 @@ module Sinatra
           HTML
         end
 
-        app.error MissingTemplate do
+        dev.error MissingTemplate do
           content_type :html, :charset => 'utf-8'
-          response.status = 500 # If I can find out how to reference the error code from the exception, I would
+          response.status = request.env['sinatra.error'].code
 
           engine = request.env['sinatra.error'].message.split('.').last
           engine = 'haml' unless ['haml', 'builder', 'erb'].include? engine
