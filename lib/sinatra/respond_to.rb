@@ -85,10 +85,10 @@ module Sinatra
           content_type :html, :charset => 'utf-8'
           response.status = 500 # If I can find out how to reference the error code from the exception, I would
 
-          engine = request.env['sinatra.error'].message[/\.([^\.]+)$/, 1]
+          engine = request.env['sinatra.error'].message.split('.').last
           engine = 'haml' unless ['haml', 'builder', 'erb'].include? engine
 
-          path = request.path_info[/([^\/]+)$/, 1]
+          path = File.basename(request.path_info)
           path = "root" if path.nil? || path.empty?
 
           format = engine == 'builder' ? 'xml' : 'html'
@@ -118,7 +118,7 @@ module Sinatra
             <img src='/__sinatra__/500.png'>
             <div id="c">
               Try this:<br />
-              #{layout if layout}
+              #{layout}
               <small>#{path}.#{format}.#{engine}</small>
               <pre>Hello World!</pre>
               <small>application.rb</small>
@@ -143,7 +143,7 @@ module Sinatra
           alias_method :render, :render_with_format
 
           def lookup_layout_with_format(*args)
-            args[1] = "#{args[1]}.#{format}".to_sym if args
+            args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
             lookup_layout_without_format *args
           end
           alias_method :lookup_layout_without_format, :lookup_layout
@@ -154,12 +154,11 @@ module Sinatra
     module Helpers
       def format(val=nil)
         unless val.nil?
-          new_mime_type = media_type(val)
-          fail "Unknown media type #{val}\nTry registering the extension with a mime type" if new_mime_type.nil?
+          mime_type = media_type(val)
+          fail "Unknown media type #{val}\nTry registering the extension with a mime type" if mime_type.nil?
 
           @format = val.to_sym
-          old_mime_type, params = response['Content-Type'].split(';', 2)
-          response['Content-Type'] = [new_mime_type, params].join(';')
+          response['Content-Type'].sub!(/^[^;]+/, mime_type)
         end
 
         @format
@@ -177,13 +176,13 @@ module Sinatra
       def charset(val=nil)
         fail "Content-Type must be set in order to specify a charset" if response['Content-Type'].nil?
 
-        if response['Content-Type'] =~ /charset=[^ ;,]+/
-          response['Content-Type'].sub!(/charset=[^ ;,]+/, (val == '' && '') || "charset=#{val}")
+        if response['Content-Type'] =~ /charset=[^;]+/
+          response['Content-Type'].sub!(/charset=[^;]+/, (val == '' && '') || "charset=#{val}")
         else
           response['Content-Type'] += ";charset=#{val}"
         end unless val.nil?
 
-        response['Content-Type'][/charset=([^ ;,]+)/, 1]
+        response['Content-Type'][/charset=([^;]+)/, 1]
       end
 
       def respond_to(&block)
