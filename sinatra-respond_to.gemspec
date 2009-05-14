@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sinatra-respond_to}
-  s.version = "0.3.3"
+  s.version = "0.3.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Hoffman"]
-  s.date = %q{2009-05-12}
+  s.date = %q{2009-05-13}
   s.description = %q{A respond_to style Rails block for baked-in web service support in Sinatra}
   s.email = %q{cehoffman@gmail.com}
   s.extra_rdoc_files = [
@@ -18,7 +18,16 @@ Gem::Specification.new do |s|
     "README.markdown",
     "Rakefile",
     "VERSION.yml",
-    "lib/sinatra/respond_to.rb"
+    "lib/sinatra/respond_to.rb",
+    "spec/app/public/static.txt",
+    "spec/app/test_app.rb",
+    "spec/app/unreachable_static.txt",
+    "spec/app/views/layout.html.haml",
+    "spec/app/views/resource.html.haml",
+    "spec/app/views/resource.js.erb",
+    "spec/app/views/resource.xml.builder",
+    "spec/extension_spec.rb",
+    "spec/spec_helper.rb"
   ]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/cehoffman/sinatra-respond_to}
@@ -26,6 +35,11 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{A respond_to style Rails block for baked-in web service support in Sinatra}
+  s.test_files = [
+    "spec/app/test_app.rb",
+    "spec/extension_spec.rb",
+    "spec/spec_helper.rb"
+  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
