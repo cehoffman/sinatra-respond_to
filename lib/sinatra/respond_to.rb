@@ -1,3 +1,5 @@
+require 'sinatra/base'
+
 # Simple note, accept header parsing was looked at but deamed
 # too much of an irregularity to deal with.  Problems with the header
 # differences from IE, Firefox, Safari, and every other UA causes
@@ -38,14 +40,14 @@ module Sinatra
       #
       # and the format will automatically be available in as <tt>format</tt>
       app.before do
-        unless options.static? && options.public? && ["GET", "HEAD"].include?(request.request_method) && static_file?(unescape(request.path_info))
+        unless options.static? && options.public? && ["GET", "HEAD"].include?(request.request_method) && static_file?(request.path_info)
           request.path_info.gsub! %r{\.([^\./]+)$}, ''
           format $1 || options.default_content
 
           # For the oh so common case of actually wanting Javascript from an XmlHttpRequest
           format :js if request.xhr? && options.assume_xhr_is_js?
 
-          content_type format
+          charset options.default_charset if TEXT_MIME_TYPES.include? format
         end
       end
 
@@ -91,18 +93,23 @@ module Sinatra
 
         app.error MissingTemplate do
           content_type :html, :charset => 'utf-8'
+          response.status = 500 # If I can find out how to reference the error code from the exception, I would
 
           engine = request.env['sinatra.error'].message[/\.([^\.]+)$/, 1]
+          engine = 'haml' unless ['haml', 'builder', 'erb'].include? engine
+          
           path = request.path_info[/([^\/]+)$/, 1]
           path = "root" if path.nil? || path.empty?
-
+          
+          format = engine == 'builder' ? 'xml' : 'html'
+          
           layout = case engine
                    when 'haml' then "!!!\n%html\n  %body= yield"
                    when 'erb' then "<html>\n  <body>\n    <%= yield %>\n  </body>\n</html>"
                    when 'builder' then "builder do |xml|\n  xml << yield\nend"
                    end
 
-          layout = "<small>app.html.#{engine}</small>\n<pre>#{escape_html(layout)}</pre>" if layout
+          layout = "<small>app.#{format}.#{engine}</small>\n<pre>#{escape_html(layout)}</pre>"
 
           (<<-HTML).gsub(/^ {10}/, '')
           <!DOCTYPE html>
@@ -122,7 +129,7 @@ module Sinatra
             <div id="c">
               Try this:<br />
               #{layout if layout}
-              <small>#{path}.html.#{engine}</small>
+              <small>#{path}.#{format}.#{engine}</small>
               <pre>Hello World!</pre>
               <small>application.rb</small>
               <pre>#{request.request_method.downcase} '#{request.path_info}' do\n  respond_to do |wants|\n    wants.#{engine == 'builder' ? 'xml' : 'html'} { #{engine} :#{path}#{",\n#{' '*32}layout => :app" if layout} }\n  end\nend</pre>
@@ -137,7 +144,7 @@ module Sinatra
       app.class_eval do
         private
           def render_with_format(*args)
-            args[1] = "#{args[1]}.#{format}".to_sym
+            args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
             render_without_format *args
           rescue Errno::ENOENT
             raise MissingTemplate, "#{args[1]}.#{args[0]}"
@@ -156,23 +163,43 @@ module Sinatra
 
     module Helpers
       def format(val=nil)
-        request.env['sinatra.respond_to.format'] = val.to_sym unless val.nil?
+        unless val.nil?
+          new_mime_type = media_type(val.to_sym)
+          fail "Unknown media type #{val}\nTry registering the extension with a mime type" if new_mime_type.nil?
+
+          request.env['sinatra.respond_to.format'] = val.to_sym
+          old_mime_type, params = response['Content-Type'].split(';', 2)
+          response['Content-Type'] = [new_mime_type, params].join(';')
+        end
+
         request.env['sinatra.respond_to.format']
       end
 
       def static_file?(path)
         return false unless path =~ /.*[^\/]$/
         public_dir = File.expand_path(options.public)
-        path = File.expand_path(File.join(public_dir, unescape(request.path_info)))
+        path = File.expand_path(File.join(public_dir, unescape(path)))
         return false if path[0, public_dir.length] != public_dir
-        return false unless File.file?(path)
-        true
+        File.file?(path)
+      end
+
+      def charset(val=nil)
+        fail "Content-Type must be set in order to specify a charset" if response['Content-Type'].nil?
+
+        if response['Content-Type'] =~ /charset=[^ ;,]+/
+          response['Content-Type'].gsub!(/charset=[^ ;,]+/, (val == '' && '') || "charset=#{val}")
+        else
+          response['Content-Type'] += ";charset=#{val}"
+        end unless val.nil?
+
+        response['Content-Type'][/charset=([^ ;,]+)/, 1]
       end
 
       def respond_to(&block)
         wants = {}
         def wants.method_missing(type, *args, &block)
           Sinatra::Base.send(:fail, "Unknown media type for respond_to: #{type}\nTry registering the extension with a mime type") if Sinatra::Base.media_type(type).nil?
+          options = args.pop if args.last.is_a?(::Hash)
           self[type] = block
         end
 
@@ -180,9 +207,6 @@ module Sinatra
 
         handler = wants[format]
         raise UnhandledFormat  if handler.nil?
-
-        content_type format, :charset => options.default_charset if TEXT_MIME_TYPES.include? format && response['Content-Type'] !~ /charset=/
-
         handler.call
       end
     end
