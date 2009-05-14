@@ -25,9 +25,9 @@ module Sinatra
     def self.registered(app)
       app.helpers RespondTo::Helpers
 
-      app.set :default_charset, 'utf-8' unless app.respond_to?(:default_charset)
-      app.set :default_content, :html unless app.respond_to?(:default_content)
-      app.set :assume_xhr_is_js, true unless app.respond_to?(:assume_xhr_is_js)
+      app.set :default_charset, 'utf-8'
+      app.set :default_content, :html
+      app.set :assume_xhr_is_js, true
 
       # We remove the trailing extension so routes
       # don't have to be of the style
@@ -38,14 +38,12 @@ module Sinatra
       #
       #   get '/resource'
       #
-      # and the format will automatically be available in as <tt>format</tt>
+      # and the format will automatically be available in <tt>format</tt>
       app.before do
-        unless options.static? && options.public? && ["GET", "HEAD"].include?(request.request_method) && static_file?(request.path_info)
-          request.path_info.gsub! %r{\.([^\./]+)$}, ''
-          format $1 || options.default_content
+        unless options.static? && options.public? && (request.get? || request.head?) && static_file?(request.path_info)
+          request.path_info.sub! %r{\.([^\./]+)$}, ''
 
-          # For the oh so common case of actually wanting Javascript from an XmlHttpRequest
-          format :js if request.xhr? && options.assume_xhr_is_js?
+          format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
 
           charset options.default_charset if TEXT_MIME_TYPES.include? format
         end
@@ -164,19 +162,20 @@ module Sinatra
     module Helpers
       def format(val=nil)
         unless val.nil?
-          new_mime_type = media_type(val.to_sym)
+          new_mime_type = media_type(val)
           fail "Unknown media type #{val}\nTry registering the extension with a mime type" if new_mime_type.nil?
 
-          request.env['sinatra.respond_to.format'] = val.to_sym
+          @format = val.to_sym
           old_mime_type, params = response['Content-Type'].split(';', 2)
           response['Content-Type'] = [new_mime_type, params].join(';')
         end
 
-        request.env['sinatra.respond_to.format']
+        @format
       end
 
+      # This is mostly just a helper so request.path_info isn't changed when
+      # serving files from the public directory
       def static_file?(path)
-        return false unless path =~ /.*[^\/]$/
         public_dir = File.expand_path(options.public)
         path = File.expand_path(File.join(public_dir, unescape(path)))
         return false if path[0, public_dir.length] != public_dir
@@ -187,7 +186,7 @@ module Sinatra
         fail "Content-Type must be set in order to specify a charset" if response['Content-Type'].nil?
 
         if response['Content-Type'] =~ /charset=[^ ;,]+/
-          response['Content-Type'].gsub!(/charset=[^ ;,]+/, (val == '' && '') || "charset=#{val}")
+          response['Content-Type'].sub!(/charset=[^ ;,]+/, (val == '' && '') || "charset=#{val}")
         else
           response['Content-Type'] += ";charset=#{val}"
         end unless val.nil?
@@ -197,19 +196,20 @@ module Sinatra
 
       def respond_to(&block)
         wants = {}
-        def wants.method_missing(type, *args, &block)
+        def wants.method_missing(type, *args, &handler)
           Sinatra::Base.send(:fail, "Unknown media type for respond_to: #{type}\nTry registering the extension with a mime type") if Sinatra::Base.media_type(type).nil?
-          self[type] = block
+          self[type] = handler
         end
 
         yield wants
 
-        handler = wants[format]
-        raise UnhandledFormat  if handler.nil?
-        handler.call
+        raise UnhandledFormat  if wants[format].nil?
+        wants[format].call
       end
     end
   end
 
+  # Get around before filter problem for classic applications by registering
+  # with the context they are run in explicitly instead of Sinatra::Default
   Sinatra::Application.register RespondTo
 end
