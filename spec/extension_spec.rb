@@ -280,6 +280,14 @@ describe Sinatra::RespondTo do
 
         lambda { charset }.should raise_error
       end
+
+      it "should not modify the Content-Type when given no argument" do
+        response['Content-Type'] = "text/html;charset=iso-8859-1"
+
+        charset
+
+        response['Content-Type'].should == "text/html;charset=iso-8859-1"
+      end
     end
 
     describe "format" do
@@ -301,6 +309,14 @@ describe Sinatra::RespondTo do
         format :js
 
         format.should == :js
+      end
+
+      it "should not modify the Content-Type when given no argument" do
+        response['Content-Type'] = "application/xml;charset=utf-8"
+
+        format
+
+        response['Content-Type'].should == "application/xml;charset=utf-8"
       end
     end
 
