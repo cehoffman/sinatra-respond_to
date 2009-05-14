@@ -159,7 +159,7 @@ describe Sinatra::RespondTo do
     it "should set the default charset when given an extension" do
       get "/normal-no-respond_to.css"
 
-      last_response['Content-Type'].should =~ %r{#{media_type(:css)}}
+      last_response['Content-Type'].should =~ %r{charset=#{TestApp.default_charset}}
     end
   end
 
