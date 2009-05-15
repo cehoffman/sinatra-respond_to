@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sinatra-respond_to}
-  s.version = "0.3.4"
+  s.version = "0.3.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Hoffman"]
-  s.date = %q{2009-05-13}
+  s.date = %q{2009-05-14}
   s.description = %q{A respond_to style Rails block for baked-in web service support in Sinatra}
   s.email = %q{cehoffman@gmail.com}
   s.extra_rdoc_files = [
