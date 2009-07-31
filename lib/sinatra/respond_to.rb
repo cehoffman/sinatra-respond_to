@@ -45,7 +45,7 @@ module Sinatra
 
           format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
 
-          charset options.default_charset if TEXT_MIME_TYPES.include? format
+          charset options.default_charset if Sinatra::RespondTo::TEXT_MIME_TYPES.include? format
         end
       end
 
