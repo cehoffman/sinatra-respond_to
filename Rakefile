@@ -11,7 +11,6 @@ Hoe.plugin :git
 Hoe.spec 'sinatra-respond_to' do
   developer('Chris Hoffman', 'cehoffman@gmail.com')
   extra_deps << ['sinatra', '>= 0.9.4']
-  extra_dev_deps << ['hoe', '>= 2.5.0']
   extra_dev_deps << ['rspec', '>= 1.3.0']
   extra_dev_deps << ['rcov', '>= 0.9.7.1']
   extra_dev_deps << ['rack-test', '>= 0.5.3']
@@ -33,7 +32,7 @@ begin
     t.rcov = true
     t.rcov_opts << '--text-summary'
     t.rcov_opts << '--sort' << 'coverage' << '--sort-reverse'
-    t.rcov_opts << '--exclude' << 'pkg,spec'
+    t.rcov_opts << '--comments' << '--exclude' << 'pkg,gems'
   end
 rescue LoadError
   puts "RSpec not available. Install it with sudo gem install rspec."
