@@ -1,7 +1,18 @@
-## About
+= sinatra_respond_to
 
+* http://www.github.com/cehoffman/sinatra-respond_to
 
-## Examples
+== DESCRIPTION:
+
+A respond_to style Rails block for baked-in web service support in Sinatra
+
+== FEATURES/PROBLEMS:
+
+* Handles setting charset for appropriate types
+* Handles setting the content type depending on what is being served
+* Automatically can adjust XmlHTTPRequests to return Javascript
+
+== SYNOPSIS:
 
     require 'sinatra'
     require 'sinatra/respond_to'
@@ -51,7 +62,7 @@ To change the character set of the response, there is a <tt>charset</tt> helper.
       end
     end
 
-## Configuration
+== CONFIGURATION:
 
 There a few options available for configuring the default behavior of respond_to using Sinatra's
 <tt>set</tt> utility.
@@ -67,10 +78,15 @@ There a few options available for configuring the default behavior of respond_to
     cause the default format for all XmlHttpRequests to be classified as wanting Javascript
     in the response.
 
-## Installing
-    sudo gem install cehoffman-sinatra-respond_to --source=http://gems.github.com
+== REQUIREMENTS:
 
-## Cavaets
+* sinatra 0.9 - 0.10
+
+== INSTALL:
+
+* gem install sinatra-respond_to
+
+== CAVEATS:
 Due to the way respond\_to works, all incoming requests have the extension striped from the request.path\_info.
 This causes routes like the following to fail.
 
@@ -91,12 +107,45 @@ If you want to ensure the route only gets called for css requests try this.  Thi
       sass :style
     end
 
-## Issues
+== DEVELOPERS:
 
-Sinatra has a bug that affects Classic style applications and extensions see [#215][215] and [#180][180].
+After checking out the source, run:
+
+  $ rake newb
+
+This task will install any missing dependencies, run the tests/specs,
+and generate the RDoc.
+
+== ISSUES
+
+Sinatra has a bug that affects Classic style applications and extensions see 215[https://sinatra.lighthouseapp.com/projects/9779/tickets/215-extensions-cannot-define-before-filters-for-classic-apps] and 180[https://sinatra.lighthouseapp.com/projects/9779/tickets/180-better-route-inheritence].
 I have worked around this by explicitly registering RespondTo with the top level Sinatra::Application when
 requiring sinatra/respond\_to.
 
-[215]: https://sinatra.lighthouseapp.com/projects/9779/tickets/215-extensions-cannot-define-before-filters-for-classic-apps "Extensions cannot define before filters for classic apps"
-[180]: https://sinatra.lighthouseapp.com/projects/9779/tickets/180-better-route-inheritence "Better route inheritence"
+* {Extensions cannot define before filters for classic apps}[https://sinatra.lighthouseapp.com/projects/9779/tickets/215-extensions-cannot-define-before-filters-for-classic-apps]
+* {Better route inheritence}[https://sinatra.lighthouseapp.com/projects/9779/tickets/180-better-route-inheritence]
 
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2009-2010 Chris Hoffman
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

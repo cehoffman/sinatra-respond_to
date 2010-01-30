@@ -1,0 +1,57 @@
+=== 0.3.7 / 2010-01-30
+
+* Update builder template for how sinatra handles this now
+* Update spec tests for 1.9
+* Update XMLHttpResponse test for new rack-test
+* Regenerated gemspec for version 0.3.6
+
+=== 0.3.6 / 2009-07-31
+
+* Version bump to 0.3.6
+* solving incompatibility between 1.9 to fully qualify TEXT_MIME_TYPES check
+
+=== 0.3.5 / 2009-05-14
+
+* Regenerated gemspec for version 0.3.5
+* Version bump to 0.3.5
+* better testing of environment expectations, workarounds for sinatra environment switching
+* problem in spec, wasn't checking for right thing
+* spec for reaching the /__sinatra__/*.png images
+* couple more tests for charset and format helpers
+* reduce regex use and simplify others
+* some more code cleaning
+* simplification and readability
+* add some more specification for respond_to
+
+=== 0.3.4 / 2009-05-13
+
+* updated gemspec
+* Version bump to 0.3.4
+* updated readme
+* passing code for tests
+* tests and tests
+* typo in readme
+* allow for content_type setting automatically when not using respond_to
+* make it a bit clearer in readme that outside of respond_to content_type is not set
+* bumped gem version in gemspec
+* noted the change in classic applications, the gem now works around this but not following extension writing guidelines
+
+=== 0.3.3 / 2009-05-12
+
+* Version bump to 0.3.3
+* Version bump to 0.3.2
+* spec referenced file not in repository
+
+=== 0.3.1 / 2009-05-11
+
+* Version bump to 0.3.1
+* add sinatra as a dependency
+* allow overriding default charset in respond_to
+* install instructions
+* first gem
+* Version bump to 0.0.0
+* missing end in example
+* add caveats about existing routes
+* fix a little error in example
+* updated readme and license
+

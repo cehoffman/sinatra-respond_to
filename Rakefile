@@ -1,16 +1,26 @@
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |spec|
-    spec.name = 'sinatra-respond_to'
-    spec.summary = 'A respond_to style Rails block for baked-in web service support in Sinatra'
-    spec.email = 'cehoffman@gmail.com'
-    spec.homepage = 'http://github.com/cehoffman/sinatra-respond_to'
-    spec.description = spec.summary
-    spec.authors = ["Chris Hoffman"]
-    spec.add_dependency('sinatra-sinatra', '>= 0.9.1.3')
-  end
-rescue LoadError
-  puts "Jewler not available.  Install it with sugo gem install technicalpickles-jeweler -s http://gems.github.com"
+# -*- ruby -*-
+
+require 'rubygems'
+require 'hoe'
+require File.expand_path(File.join('.', 'lib', 'sinatra', 'respond_to', 'version'))
+
+Hoe.plugin :gemcutter
+Hoe.plugin :clean
+Hoe.plugin :git
+
+Hoe.spec 'sinatra_respond_to' do
+  developer('Chris Hoffman', 'cehoffman@gmail.com')
+  extra_deps << ['sinatra', '>= 0.9.4']
+  extra_dev_deps << ['hoe', '>= 2.5.0']
+  extra_dev_deps << ['rspec', '>= 1.3.0']
+  extra_dev_deps << ['rcov', '>= 0.9.7.1']
+  extra_dev_deps << ['rack-test', '>= 0.5.3']
+  extra_dev_deps << ['haml', ">= 2.0"]
+  extra_dev_deps << ['builder', '>= 2.0']
+  self.readme_file = 'README.rdoc'
+  self.history_file = 'Changelog.rdoc'
+  self.test_globs = 'spec/*_spec.rb'
+  self.version = ::Sinatra::RespondTo::Version
 end
 
 begin
@@ -28,3 +38,5 @@ begin
 rescue LoadError
   puts "RSpec not available. Install it with sudo gem install rspec."
 end
+
+# vim: syntax=ruby
