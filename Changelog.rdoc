@@ -1,3 +1,8 @@
+=== 0.3.8 / 2010-01-30
+
+* Need to bump because of wrong gem name
+* Fix some issues in the README
+
 === 0.3.7 / 2010-01-30
 
 * Update builder template for how sinatra handles this now
