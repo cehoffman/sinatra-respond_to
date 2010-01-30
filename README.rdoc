@@ -1,4 +1,4 @@
-= sinatra_respond_to
+= sinatra-respond_to
 
 * http://www.github.com/cehoffman/sinatra-respond_to
 
@@ -10,7 +10,7 @@ A respond_to style Rails block for baked-in web service support in Sinatra
 
 * Handles setting charset for appropriate types
 * Handles setting the content type depending on what is being served
-* Automatically can adjust XmlHTTPRequests to return Javascript
+* Automatically can adjust XMLHttpRequests to return Javascript
 
 == SYNOPSIS:
 
@@ -67,20 +67,20 @@ To change the character set of the response, there is a <tt>charset</tt> helper.
 There a few options available for configuring the default behavior of respond_to using Sinatra's
 <tt>set</tt> utility.
 
-* <tt>default\_charset - utf-8</tt><br />
+* <tt>default\_charset - utf-8</tt>
     Assumes all text documents are encoded using this character set.
     This can be overridden within the respond_to block for the appropriate format
-* <tt>default\_content - :html</tt><br />
+* <tt>default\_content - :html</tt>
     When a user vists a url without an extension, for example /post this will be
     the assumed content to serve first.  Expects a symbol as used in setting content_type.
-* <tt>assume\_xhr\_is\_js - true</tt><br />
+* <tt>assume\_xhr\_is\_js - true</tt>
     To avoid headaches with accept headers, and appending .js to urls, this will
     cause the default format for all XmlHttpRequests to be classified as wanting Javascript
     in the response.
 
 == REQUIREMENTS:
 
-* sinatra 0.9 - 0.10
+* sinatra 0.9.4 - 0.10
 
 == INSTALL:
 
