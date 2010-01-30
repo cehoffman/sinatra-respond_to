@@ -179,13 +179,13 @@ module Sinatra
         end if ::Sinatra::VERSION =~ /^1.0/
       end
 
-      def mime_type(sym)
+      def self.mime_type(sym)
         ::Sinatra::Base.respond_to?(:media_type) && ::Sinatra::Base.media_type(sym) || ::Sinatra::Base.mime_type(sym)
       end
 
       def format(val=nil)
         unless val.nil?
-          mime_type = mime_type(val)
+          mime_type = ::Sinatra::RespondTo::Helpers.mime_type(val)
           fail "Unknown media type #{val}\nTry registering the extension with a mime type" if mime_type.nil?
 
           @format = val.to_sym
@@ -219,7 +219,7 @@ module Sinatra
       def respond_to(&block)
         wants = {}
         def wants.method_missing(type, *args, &handler)
-          ::Sinatra::Base.send(:fail, "Unknown media type for respond_to: #{type}\nTry registering the extension with a mime type") if ::Sinatra::Base.mime_type(type).nil?
+          ::Sinatra::Base.send(:fail, "Unknown media type for respond_to: #{type}\nTry registering the extension with a mime type") if ::Sinatra::RespondTo::Helpers.mime_type(type).nil?
           self[type] = handler
         end
 
