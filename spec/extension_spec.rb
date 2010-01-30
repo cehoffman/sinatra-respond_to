@@ -260,6 +260,7 @@ describe Sinatra::RespondTo do
   end
 
   describe "helpers:" do
+    include Sinatra::Helpers
     include Sinatra::RespondTo::Helpers
 
     before(:each) do
@@ -331,6 +332,12 @@ describe Sinatra::RespondTo do
 
         response['Content-Type'].should == "application/xml;charset=utf-8"
       end
+
+      it "should not return nil when only content_type sets headers" do
+        content_type :xhtml
+
+        format.should == :xhtml
+      end if Sinatra::VERSION =~ /^1.0/
     end
 
     describe "static_file?" do

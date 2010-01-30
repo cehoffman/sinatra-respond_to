@@ -157,6 +157,21 @@ module Sinatra
     end
 
     module Helpers
+      # Patch the content_type function to remember the set type
+      # This helps cut down on time in the format helper so it
+      # doesn't have to do a reverse lookup on the header
+      def self.included(klass)
+        klass.class_eval do
+          def content_type_with_save(*args)
+            content_type_without_save *args
+            @format = args.first.to_sym
+            response['Content-Type']
+          end
+          alias_method :content_type_without_save, :content_type
+          alias_method :content_type, :content_type_with_save
+        end if ::Sinatra::VERSION =~ /^1.0/
+      end
+
       def mime_type(sym)
         ::Sinatra::Base.respond_to?(:media_type) && ::Sinatra::Base.media_type(sym) || ::Sinatra::Base.mime_type(sym)
       end
