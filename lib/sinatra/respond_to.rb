@@ -40,6 +40,9 @@ module Sinatra
       #
       # and the format will automatically be available in <tt>format</tt>
       app.before do
+        # Let through sinatra image urls in development
+        next if self.class.development? && request.path_info =~ %r{/__sinatra__/.*?.png}
+
         unless options.static? && options.public? && (request.get? || request.head?) && static_file?(request.path_info)
           request.path_info.sub! %r{\.([^\./]+)$}, ''
 
@@ -52,9 +55,9 @@ module Sinatra
      app.configure :development do |dev|
         # Very, very, very hackish but only for development at least
         # Modifies the regex matching /__sinatra__/:image.png to not have the extension
-        ["GET", "HEAD"].each do |verb|
-          dev.routes[verb][1][0] = Regexp.new(dev.routes[verb][1][0].source.gsub(/\\\.[^\.\/]+\$$/, '$'))
-        end
+        #["GET", "HEAD"].each do |verb|
+        #  dev.routes[verb][1][0] = Regexp.new(dev.routes[verb][1][0].source.gsub(/\\\.[^\.\/]+\$$/, '$'))
+        #end
 
         dev.error UnhandledFormat do
           content_type :html, :charset => 'utf-8'
