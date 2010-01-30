@@ -15,13 +15,13 @@ describe Sinatra::RespondTo do
     end
 
     it "should initialize with :assume_xhr_is_js set to true" do
-      TestApp.assume_xhr_is_js be_true
+      TestApp.assume_xhr_is_js == true
     end
   end
 
   describe "assume_xhr_is_js" do
     it "should set the content type to application/javascript for an XMLHttpRequest" do
-      header 'HTTP_X_REQUESTED_WITH', 'XMLHttpRequest'
+      header 'X_REQUESTED_WITH', 'XMLHttpRequest'
 
       get '/resource'
 
@@ -30,7 +30,7 @@ describe Sinatra::RespondTo do
 
     it "should not set the content type to application/javascript for an XMLHttpRequest when assume_xhr_is_js is false" do
       TestApp.disable :assume_xhr_is_js
-      header 'HTTP_X_REQUESTED_WITH', 'XMLHttpRequest'
+      header 'X_REQUESTED_WITH', 'XMLHttpRequest'
       get '/resource'
 
       last_response['Content-Type'].should_not =~ %r{#{media_type(:js)}}
