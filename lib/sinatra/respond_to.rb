@@ -136,11 +136,18 @@ module Sinatra
 
       app.class_eval do
         private
-          def render_with_format(*args)
+          # Changes in 1.0 Sinatra reuse render for layout so we store
+          # the original value to tell us if this is an automatic attempt
+          # to do a layout call.  If it is, it might fail with Errno::ENOENT
+          # and we want to pass that back to sinatra since it isn't a MissingTemplate
+          # error
+          def render_with_format(*args, &block)
+            assumed_layout = args[1] == :layout
             args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
-            render_without_format *args
-          rescue Errno::ENOENT
-            raise MissingTemplate, "#{args[1]}.#{args[0]}"
+            render_without_format *args, &block
+          rescue Errno::ENOENT => e
+            raise MissingTemplate, "#{args[1]}.#{args[0]}" unless assumed_layout
+            raise e
           end
           alias_method :render_without_format, :render
           alias_method :render, :render_with_format
