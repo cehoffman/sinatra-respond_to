@@ -164,18 +164,8 @@ describe Sinatra::RespondTo do
   end
 
   describe "error pages in production" do
-    class ProductionErrorApp < Sinatra::Base
-      set :environment, :production
-      register Sinatra::RespondTo
-      get '/missing-template' do
-        respond_to do |wants|
-          wants.html { haml :missing }
-        end
-      end
-    end
-
     before(:each) do
-      @app = Rack::Builder.new { run ProductionErrorApp }
+      @app = Rack::Builder.new { run ::ProductionErrorApp }
     end
 
     describe Sinatra::RespondTo::MissingTemplate do
