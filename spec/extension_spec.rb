@@ -1,8 +1,8 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Sinatra::RespondTo do
-  def media_type(sym)
-    Sinatra::Base.media_type(sym)
+  def mime_type(sym)
+    ::Sinatra::Base.respond_to?(:media_type) && ::Sinatra::Base.media_type(sym) || ::Sinatra::Base.mime_type(sym)
   end
 
   describe "options" do
@@ -25,7 +25,7 @@ describe Sinatra::RespondTo do
 
       get '/resource'
 
-      last_response['Content-Type'].should =~ %r{#{media_type(:js)}}
+      last_response['Content-Type'].should =~ %r{#{mime_type(:js)}}
     end
 
     it "should not set the content type to application/javascript for an XMLHttpRequest when assume_xhr_is_js is false" do
@@ -33,7 +33,7 @@ describe Sinatra::RespondTo do
       header 'X_REQUESTED_WITH', 'XMLHttpRequest'
       get '/resource'
 
-      last_response['Content-Type'].should_not =~ %r{#{media_type(:js)}}
+      last_response['Content-Type'].should_not =~ %r{#{mime_type(:js)}}
 
       # Put back the option, no side effects here
       TestApp.enable :assume_xhr_is_js
@@ -76,7 +76,7 @@ describe Sinatra::RespondTo do
     it "should set the appropriate content-type for route with an extension" do
       get "/resource.xml"
 
-      last_response['Content-Type'].should =~ %r{#{media_type(:xml)}}
+      last_response['Content-Type'].should =~ %r{#{mime_type(:xml)}}
     end
 
     it "should set the character set to the default character set" do
@@ -141,7 +141,7 @@ describe Sinatra::RespondTo do
     it "should set the default content type when no extension" do
       get "/normal-no-respond_to"
 
-      last_response['Content-Type'].should =~ %r{#{media_type(TestApp.default_content)}}
+      last_response['Content-Type'].should =~ %r{#{mime_type(TestApp.default_content)}}
     end
 
     it "should set the default character when no extension" do
@@ -153,7 +153,7 @@ describe Sinatra::RespondTo do
     it "should set the appropriate content type when given an extension" do
       get "/normal-no-respond_to.css"
 
-      last_response['Content-Type'].should =~ %r{#{media_type(:css)}}
+      last_response['Content-Type'].should =~ %r{#{mime_type(:css)}}
     end
 
     it "should set the default charset when given an extension" do
@@ -311,7 +311,7 @@ describe Sinatra::RespondTo do
       it "should set the correct mime type when given an extension" do
         format :xml
 
-        response['Content-Type'].split(';').should include(media_type(:xml))
+        response['Content-Type'].split(';').should include(mime_type(:xml))
       end
 
       it "should fail when set to an unknown extension type" do
