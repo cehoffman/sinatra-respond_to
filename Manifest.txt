@@ -4,6 +4,7 @@ README.rdoc
 Rakefile
 lib/sinatra/respond_to.rb
 lib/sinatra/respond_to/version.rb
+spec/spec.opts
 spec/spec_helper.rb
 spec/extension_spec.rb
 spec/app/production_error_app.rb

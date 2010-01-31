@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'erb'
 require 'haml'
+require 'sass'
 require 'builder'
 
 class TestApp < Sinatra::Base
