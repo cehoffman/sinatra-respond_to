@@ -80,7 +80,7 @@ There a few options available for configuring the default behavior of respond_to
 
 == REQUIREMENTS:
 
-* sinatra 0.9.4 - 0.10
+* sinatra 0.9.4 - 1.0
 
 == INSTALL:
 
