@@ -53,12 +53,6 @@ module Sinatra
       end
 
      app.configure :development do |dev|
-        # Very, very, very hackish but only for development at least
-        # Modifies the regex matching /__sinatra__/:image.png to not have the extension
-        #["GET", "HEAD"].each do |verb|
-        #  dev.routes[verb][1][0] = Regexp.new(dev.routes[verb][1][0].source.gsub(/\\\.[^\.\/]+\$$/, '$'))
-        #end
-
         dev.error UnhandledFormat do
           content_type :html, :charset => 'utf-8'
 
@@ -99,7 +93,7 @@ module Sinatra
           layout = case engine
                    when 'haml' then "!!!\n%html\n  %body= yield"
                    when 'erb' then "<html>\n  <body>\n    <%= yield %>\n  </body>\n</html>"
-                   when 'builder' then "builder do |xml|\n  xml << yield\nend"
+                   when 'builder' then ::Sinatra::VERSION =~ /^1.0/ ? "xml << yield" : "builder do |xml|\n  xml << yield\nend"
                    end
 
           layout = "<small>app.#{format}.#{engine}</small>\n<pre>#{escape_html(layout)}</pre>"
