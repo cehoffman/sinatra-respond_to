@@ -202,10 +202,11 @@ describe Sinatra::RespondTo do
         last_response.status.should == 500
       end
 
-      it "should provide a helpful error message for a missing template when in development" do
-        get '/missing-template'
+      it "should provide a helpful generic error message for a missing template when in development" do
+        get '/missing-template.css'
 
-        last_response.body.should =~ /missing\.html\.haml/
+        last_response.body.should =~ /missing-template\.html\.haml/
+        last_response.body.should =~ %r{get '/missing-template' do respond_to do |wants| wants.html \{ haml :missing-template, layout => :app \} end end}
       end
 
       it "should show the /__sinatra__/500.png" do

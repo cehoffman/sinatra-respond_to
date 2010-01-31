@@ -48,6 +48,7 @@ class TestApp < Sinatra::Base
       wants.html { haml :missing }
       wants.xml { builder :missing }
       wants.js { erb :missing }
+      wants.css { sass :missing }
     end
   end
 end
