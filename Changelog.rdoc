@@ -1,3 +1,17 @@
+=== 0.4.0 / 2010-01-30
+
+* Specify that when running into unknown template languages the error message defaults to a generic template example
+* Update code example
+* Update supported sinatra versions in README
+* Remove issues section because I believe it has been corrected
+* Update development error message for new builder syntax
+* Remove redundant hoe dependency and update rcov opts
+* Fix the media_type -> mime_type conversion on Sinatra 0.9
+* Fix rendering with extensions, e.g. resource.html.haml
+* Add spec and passing code for content_type usage
+* Changed how development error images are shown
+* Update media_type to mime_type for Sinatra 1.0 while maintaining backward compat
+
 === 0.3.8 / 2010-01-30
 
 * Need to bump because of wrong gem name

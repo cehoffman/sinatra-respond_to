@@ -1,5 +1,5 @@
 module Sinatra
   module RespondTo
-    Version = '0.3.8'
+    Version = '0.4.0'
   end
 end
