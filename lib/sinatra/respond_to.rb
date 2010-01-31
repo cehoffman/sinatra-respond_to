@@ -165,7 +165,7 @@ module Sinatra
         klass.class_eval do
           def content_type_with_save(*args)
             content_type_without_save *args
-            @format = args.first.to_sym
+            @_format = args.first.to_sym
             response['Content-Type']
           end
           alias_method :content_type_without_save, :content_type
@@ -182,11 +182,11 @@ module Sinatra
           mime_type = ::Sinatra::RespondTo::Helpers.mime_type(val)
           fail "Unknown media type #{val}\nTry registering the extension with a mime type" if mime_type.nil?
 
-          @format = val.to_sym
+          @_format = val.to_sym
           response['Content-Type'].sub!(/^[^;]+/, mime_type)
         end
 
-        @format
+        @_format
       end
 
       # This is mostly just a helper so request.path_info isn't changed when
