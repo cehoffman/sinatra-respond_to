@@ -17,7 +17,7 @@ A respond_to style Rails block for baked-in web service support in Sinatra
     require 'sinatra'
     require 'sinatra/respond_to'
     
-    register Sinatra::RespondTo
+    Sinatra::Application.register Sinatra::RespondTo
 
     get '/posts' do
       @posts = Post.recent
