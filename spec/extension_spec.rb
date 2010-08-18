@@ -41,6 +41,11 @@ describe Sinatra::RespondTo do
   end
 
   describe "extension routing" do
+    it "should use a format parameter before sniffing out the extension" do
+      get "/resource?format=xml"
+      last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+    end
+    
     it "breaks routes expecting an extension" do
       # In test_app.rb the route is defined as get '/style.css' instead of get '/style'
       get "/style.css"

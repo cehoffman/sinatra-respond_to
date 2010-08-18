@@ -44,10 +44,13 @@ module Sinatra
         next if self.class.development? && request.path_info =~ %r{/__sinatra__/.*?.png}
 
         unless options.static? && options.public? && (request.get? || request.head?) && static_file?(request.path_info)
-          request.path_info.sub! %r{\.([^\./]+)$}, ''
+          if request.params.has_key? 'format'
+            format params['format']
+          else
+            request.path_info.sub! %r{\.([^\./]+)$}, ''
 
-          format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
-
+            format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
+          end
           charset options.default_charset if Sinatra::RespondTo::TEXT_MIME_TYPES.include? format
         end
       end
