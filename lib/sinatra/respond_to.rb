@@ -96,7 +96,7 @@ module Sinatra
           layout = case engine
                    when 'haml' then "!!!\n%html\n  %body= yield"
                    when 'erb' then "<html>\n  <body>\n    <%= yield %>\n  </body>\n</html>"
-                   when 'builder' then ::Sinatra::VERSION =~ /^1.0/ ? "xml << yield" : "builder do |xml|\n  xml << yield\nend"
+                   when 'builder' then "xml << yield"
                    end
 
           layout = "<small>app.#{format}.#{engine}</small>\n<pre>#{escape_html(layout)}</pre>"
@@ -132,31 +132,20 @@ module Sinatra
       end
 
       app.class_eval do
-        private
-          # Changes in 1.0 Sinatra reuse render for layout so we store
-          # the original value to tell us if this is an automatic attempt
-          # to do a layout call.  If it is, it might fail with Errno::ENOENT
-          # and we want to pass that back to sinatra since it isn't a MissingTemplate
-          # error
-          def render_with_format(*args, &block)
-            assumed_layout = args[1] == :layout
-            args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
-            render_without_format *args, &block
-          rescue Errno::ENOENT => e
-            raise MissingTemplate, "#{args[1]}.#{args[0]}" unless assumed_layout
-            raise e
-          end
-          alias_method :render_without_format, :render
-          alias_method :render, :render_with_format
-
-          if ::Sinatra::VERSION =~ /^0\.9/
-            def lookup_layout_with_format(*args)
-              args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
-              lookup_layout_without_format *args
-            end
-            alias_method :lookup_layout_without_format, :lookup_layout
-            alias_method :lookup_layout, :lookup_layout_with_format
-          end
+        # Changes in 1.0 Sinatra reuse render for layout so we store the
+        # original value to tell us if this is an automatic attempt to do a
+        # layout call.  If it is, it might fail with Errno::ENOENT and we want
+        # to pass that back to sinatra since it isn't a MissingTemplate error
+        alias :render_without_format :render
+        def render(*args, &block)
+          assumed_layout = args[1] == :layout
+          args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
+          render_without_format *args, &block
+        rescue Errno::ENOENT => e
+          raise MissingTemplate, "#{args[1]}.#{args[0]}" unless assumed_layout
+          raise e
+        end
+        private :render
       end
     end
 
@@ -173,7 +162,7 @@ module Sinatra
           end
           alias_method :content_type_without_save, :content_type
           alias_method :content_type, :content_type_with_save
-        end if ::Sinatra::VERSION =~ /^1.0/
+        end
       end
 
       def self.mime_type(sym)
