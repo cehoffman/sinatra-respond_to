@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Sinatra::RespondTo do
   def mime_type(sym)
-    ::Sinatra::Base.respond_to?(:media_type) && ::Sinatra::Base.media_type(sym) || ::Sinatra::Base.mime_type(sym)
+    ::Sinatra::Base.mime_type(sym)
   end
 
   describe "options" do
