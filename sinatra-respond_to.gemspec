@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'haml', '>= 2.0'
 
   s.test_files   = Dir['spec/**/*']
-  s.files        = `git ls-files`.split("\n") - ['.gitignore']
+  s.files        = `git ls-files`.split("\n") - ['.gitignore', '.rspec']
   s.require_path = 'lib'
 end
