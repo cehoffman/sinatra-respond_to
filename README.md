@@ -14,6 +14,8 @@ A respond\_to style Rails block for baked-in web service support in Sinatra
 
 ## SYNOPSIS:
 
+Allows urls of the form **/posts**, **/posts.rss**, and **/posts?format=atom** to route to the same Sinatra block and format specific respond\_to block.
+
     require 'sinatra'
     require 'sinatra/respond_to'
     
@@ -85,7 +87,7 @@ There a few options available for configuring the default behavior of respond\_t
 
 ## INSTALL:
 
-    $ gem install sinatra-respond\_to
+    $ gem install sinatra-respond_to
 
 ## CAVEATS:
 Due to the way respond\_to works, all incoming requests have the extension striped from the request.path\_info. This causes routes like the following to fail.
