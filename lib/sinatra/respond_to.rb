@@ -155,13 +155,12 @@ module Sinatra
       # doesn't have to do a reverse lookup on the header
       def self.included(klass)
         klass.class_eval do
-          def content_type_with_save(*args)
+          alias :content_type_without_save :content_type
+          def content_type(*args)
             content_type_without_save *args
             @_format = args.first.to_sym
             response['Content-Type']
           end
-          alias_method :content_type_without_save, :content_type
-          alias_method :content_type, :content_type_with_save
         end
       end
 
