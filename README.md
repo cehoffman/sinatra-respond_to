@@ -114,7 +114,7 @@ If you want to ensure the route only gets called for css requests try this.  Thi
 After checking out the source, run:
 
     $ bundle install
-    $ rake spec:spec
+    $ rake spec
 
 This task will install any missing dependencies, run the tests/specs, and generate the RDoc.
 
