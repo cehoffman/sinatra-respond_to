@@ -1,3 +1,8 @@
+=== 0.5.0 / 2010-08-22
+
+* Requires Sinatra 1.x
+* Allow specifying format through a format param to the url
+
 === 0.4.0 / 2010-01-30
 
 * Specify that when running into unknown template languages the error message defaults to a generic template example
