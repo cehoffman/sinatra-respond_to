@@ -14,14 +14,15 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'sinatra', '~> 1.0'
 
-  s.add_development_dependency 'bundler', '~> 1.0.0.rc.5'
-  s.add_development_dependency 'rspec', '~> 2.0.0.beta.19'
+  s.add_development_dependency 'rspec', '~> 2.0.0.beta.20'
   s.add_development_dependency 'rack-test', '~> 0.5.4'
   s.add_development_dependency 'rcov', '~> 0.9.8'
   s.add_development_dependency 'builder', '>= 2.0'
   s.add_development_dependency 'haml', '>= 2.0'
+  s.add_development_dependency 'bundler', '~> 1.0.0'
 
-  s.test_files   = Dir['spec/**/*']
-  s.files        = `git ls-files`.split("\n") - ['.gitignore', '.rspec']
+  s.files        = `git ls-files`.split("\n")
+  s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables  = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_path = 'lib'
 end
