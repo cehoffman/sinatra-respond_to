@@ -8,7 +8,6 @@ A respond\_to style Rails block for baked-in web service support in Sinatra
 
 ## FEATURES/PROBLEMS:
 
-* Handles setting charset for appropriate types
 * Handles setting the content type depending on what is being served
 * Automatically can adjust XMLHttpRequests to return Javascript
 
@@ -70,9 +69,6 @@ To change the character set of the response, there is a `charset` helper.  For e
 
 There a few options available for configuring the default behavior of respond\_to using Sinatra's `set` utility.
 
-* **default\_charset - utf-8**
-      Assumes all text documents are encoded using this character set.
-      This can be overridden within the respond_to block for the appropriate format
 * **default\_content - :html**
       When a user vists a url without an extension, for example /post this will be
       the assumed content to serve first.  Expects a symbol as used in setting content_type.
@@ -83,7 +79,7 @@ There a few options available for configuring the default behavior of respond\_t
 
 ## REQUIREMENTS:
 
-* sinatra 1.x
+* sinatra 1.1
 
 ## INSTALL:
 
@@ -93,11 +89,10 @@ There a few options available for configuring the default behavior of respond\_t
 Due to the way respond\_to works, all incoming requests have the extension striped from the request.path\_info. This causes routes like the following to fail.
 
     get '/style.css' do
-      content_type :css, :charset => 'utf-8'
       sass :style   # => renders views/style.sass
     end
 
-They need to be changed to the following.  Note that you no longer have to set the content\_type or charset.
+They need to be changed to the following.
 
     get '/style' do
       sass :style   # => renders views/style.css.sass
