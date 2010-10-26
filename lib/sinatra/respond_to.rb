@@ -16,16 +16,9 @@ module Sinatra
       def code; 500 end
     end
 
-    TEXT_MIME_TYPES = [:txt, :html, :js, :json, :xml, :rss, :atom, :css, :asm, :c, :cc, :conf,
-                       :csv, :cxx, :diff, :dtd, :f, :f77, :f90, :for, :gemspec, :h, :hh, :htm,
-                       :log, :mathml, :mml, :p, :pas, :pl, :pm, :py, :rake, :rb, :rdf, :rtf, :ru,
-                       :s, :sgm, :sgml, :sh, :svg, :svgz, :text, :wsdl, :xhtml, :xsl, :xslt, :yaml,
-                       :yml, :ics]
-
     def self.registered(app)
       app.helpers RespondTo::Helpers
 
-      app.set :default_charset, 'utf-8'
       app.set :default_content, :html
       app.set :assume_xhr_is_js, true
 
@@ -51,7 +44,6 @@ module Sinatra
 
             format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
           end
-          charset options.default_charset if Sinatra::RespondTo::TEXT_MIME_TYPES.include? format
         end
       end
 

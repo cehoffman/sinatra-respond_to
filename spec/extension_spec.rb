@@ -6,10 +6,6 @@ describe Sinatra::RespondTo do
   end
 
   describe "options" do
-    it "should initialize with :default_charset set to 'utf-8'" do
-      TestApp.default_charset.should == 'utf-8'
-    end
-
     it "should initialize with :default_content set to :html" do
       TestApp.default_content.should == :html
     end
@@ -84,22 +80,10 @@ describe Sinatra::RespondTo do
       last_response['Content-Type'].should =~ %r{#{mime_type(:xml)}}
     end
 
-    it "should set the character set to the default character set" do
-      get "/default_charset"
-
-      last_response['Content-Type'].should =~ %r{charset=#{TestApp.default_charset}}
-    end
-
     it "should honor a change in character set in block" do
       get "/iso-8859-1"
 
       last_response['Content-Type'].should =~ %r{charset=iso-8859-1}
-    end
-
-    it "should not set the character set when requesting a non text resource" do
-      get "/resource.png"
-
-      last_response['Content-Type'].should_not =~ /charset/
     end
 
     it "should return not found when path does not exist" do
@@ -149,22 +133,10 @@ describe Sinatra::RespondTo do
       last_response['Content-Type'].should =~ %r{#{mime_type(TestApp.default_content)}}
     end
 
-    it "should set the default character when no extension" do
-      get "/normal-no-respond_to"
-
-      last_response['Content-Type'].should =~ %r{charset=#{TestApp.default_charset}}
-    end
-
     it "should set the appropriate content type when given an extension" do
       get "/normal-no-respond_to.css"
 
       last_response['Content-Type'].should =~ %r{#{mime_type(:css)}}
-    end
-
-    it "should set the default charset when given an extension" do
-      get "/normal-no-respond_to.css"
-
-      last_response['Content-Type'].should =~ %r{charset=#{TestApp.default_charset}}
     end
   end
 
@@ -340,6 +312,10 @@ describe Sinatra::RespondTo do
       end
 
       it "should not return nil when only content_type sets headers" do
+        settings = mock('settings')
+        settings.should_receive(:default_encoding).and_return('utf-8')
+        stub!(:settings).and_return(settings)
+
         content_type :xhtml
 
         format.should == :xhtml
