@@ -170,7 +170,7 @@ module Sinatra
           fail "Unknown media type #{val}\nTry registering the extension with a mime type" if mime_type.nil?
 
           @_format = val.to_sym
-          response['Content-Type'].sub!(/^[^;]+/, mime_type)
+          response['Content-Type'].to_s.sub!(/^[^;]+/, mime_type)
         end
 
         @_format
@@ -186,6 +186,7 @@ module Sinatra
       end
 
       def charset(val=nil)
+        response['Content-Type'] ? response['Content-Type'].to_s : nil
         fail "Content-Type must be set in order to specify a charset" if response['Content-Type'].nil?
 
         if response['Content-Type'] =~ /charset=[^;]+/
