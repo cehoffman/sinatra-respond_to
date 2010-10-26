@@ -81,6 +81,8 @@ There a few options available for configuring the default behavior of respond\_t
 
 * sinatra 1.1
 
+If you would like to use Sinatra 1.0, use version `0.5.0`.
+
 ## INSTALL:
 
     $ gem install sinatra-respond_to
