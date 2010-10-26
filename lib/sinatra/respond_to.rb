@@ -149,9 +149,8 @@ module Sinatra
         klass.class_eval do
           alias :content_type_without_save :content_type
           def content_type(*args)
-            content_type_without_save *args
             @_format = args.first.to_sym
-            response['Content-Type']
+            content_type_without_save *args
           end
         end
       end
@@ -162,7 +161,7 @@ module Sinatra
           fail "Unknown media type #{val}\nTry registering the extension with a mime type" if mime_type.nil?
 
           @_format = val.to_sym
-          response['Content-Type'].sub!(/^[^;]+/, mime_type)
+          response['Content-Type'] ? response['Content-Type'].sub!(/^[^;]+/, mime_type) : content_type(@_format)
         end
 
         @_format
