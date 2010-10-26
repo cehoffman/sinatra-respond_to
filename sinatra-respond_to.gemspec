@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = '>= 1.3.6'
 
-  s.add_runtime_dependency 'sinatra', '~> 1.0'
+  s.add_runtime_dependency 'sinatra', '~> 1.1'
 
-  s.add_development_dependency 'rspec', '~> 2.0.0.beta.20'
-  s.add_development_dependency 'rack-test', '~> 0.5.4'
+  s.add_development_dependency 'rspec', '~> 2.0.1'
+  s.add_development_dependency 'rack-test', '~> 0.5.6'
   s.add_development_dependency 'rcov', '~> 0.9.8'
   s.add_development_dependency 'builder', '>= 2.0'
   s.add_development_dependency 'haml', '>= 2.0'
