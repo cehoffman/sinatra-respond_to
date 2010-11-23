@@ -149,7 +149,7 @@ module Sinatra
         klass.class_eval do
           alias :content_type_without_save :content_type
           def content_type(*args)
-            @_format = args.first.to_sym
+            @_format = (args.first ? args.first.to_sym : nil)
             content_type_without_save *args
           end
         end
