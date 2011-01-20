@@ -39,8 +39,9 @@ module Sinatra
         unless options.static? && options.public? && (request.get? || request.head?) && static_file?(request.path_info)
           if request.params.has_key? 'format'
             format params['format']
-          else      
-            [:path_info, :route].each { |attr| request.send(attr).sub! %r{\.([^\./]+)$}, '' }
+          else          
+            path_info = request.path_info.sub %r{\.([^\./]+)$}, '' }
+            request.path_info = path_info
             format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
           end
         end
