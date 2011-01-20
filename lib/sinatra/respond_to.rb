@@ -32,17 +32,20 @@ module Sinatra
       #   get '/resource'
       #
       # and the format will automatically be available in <tt>format</tt>
-      app.before do
+      app.before do                                    
+        puts "DOING RESPOND_TO BEFORE..."
         # Let through sinatra image urls in development
         next if self.class.development? && request.path_info =~ %r{/__sinatra__/.*?.png}
 
         unless options.static? && options.public? && (request.get? || request.head?) && static_file?(request.path_info)
+          puts "DOING RESPOND_TO BEFORE: #{params['format']}..."
           if request.params.has_key? 'format'
             format params['format']
-          else          
+          else                                              
+            puts "DOING PATH MODS..."
             request.path_info.sub! %r{\.([^\./]+)$}, ''
             request.route.sub! %r{\.([^\./]+)$}, ''
-            # request.path_info = path_info
+            
             format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
           end
         end
