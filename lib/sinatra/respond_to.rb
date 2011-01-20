@@ -40,8 +40,9 @@ module Sinatra
           if request.params.has_key? 'format'
             format params['format']
           else          
-            path_info = request.path_info.sub %r{\.([^\./]+)$}, '' }
-            request.path_info = path_info
+            request.path_info.sub! %r{\.([^\./]+)$}, ''
+            request.route.sub! %r{\.([^\./]+)$}, ''
+            # request.path_info = path_info
             format request.xhr? && options.assume_xhr_is_js? ? :js : $1 || options.default_content
           end
         end
