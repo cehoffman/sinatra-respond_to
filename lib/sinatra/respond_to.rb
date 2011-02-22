@@ -40,7 +40,11 @@ module Sinatra
           if request.params.has_key? 'format'
             format params['format']
           else
-            request.path_info.sub! %r{\.([^\./]+)$}, ''
+            # Sinatra relies on a side-effect from path_info= to
+            # determine its routes. A direct string change (e.g., sub!)
+            # would bypass that -- and fail to have the effect we're looking
+            # for.
+            request.path_info = request.path_info.sub %r{\.([^\./]+)$}, ''
 
             format $1 || (request.xhr? && options.assume_xhr_is_js? ? :js : options.default_content)
           end
