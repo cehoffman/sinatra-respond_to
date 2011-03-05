@@ -34,6 +34,14 @@ describe Sinatra::RespondTo do
       # Put back the option, no side effects here
       TestApp.enable :assume_xhr_is_js
     end
+    
+    it "should not set the content type to application/javascript for an XMLHttpRequest to an explicit extension" do
+      header 'X_REQUESTED_WITH', 'XMLHttpRequest'
+      
+      get '/resource.json'
+      
+      last_response['Content-Type'].should =~ %r{#{mime_type(:json)}}
+    end
   end
 
   describe "extension routing" do
