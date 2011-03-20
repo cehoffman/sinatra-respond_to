@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    sinatra-respond_to (0.5.0)
-      sinatra (~> 1.1)
+    sinatra-respond_to (0.6.0)
+      sinatra (~> 1.2)
 
 GEM
   remote: http://rubygems.org/
@@ -14,30 +14,27 @@ GEM
     rack-test (0.5.6)
       rack (>= 1.0)
     rcov (0.9.9)
-    rspec (2.0.1)
-      rspec-core (~> 2.0.1)
-      rspec-expectations (~> 2.0.1)
-      rspec-mocks (~> 2.0.1)
-    rspec-core (2.0.1)
-    rspec-expectations (2.0.1)
-      diff-lcs (>= 1.1.2)
-    rspec-mocks (2.0.1)
-      rspec-core (~> 2.0.1)
-      rspec-expectations (~> 2.0.1)
-    sinatra (1.1.0)
+    rspec (2.5.0)
+      rspec-core (~> 2.5.0)
+      rspec-expectations (~> 2.5.0)
+      rspec-mocks (~> 2.5.0)
+    rspec-core (2.5.1)
+    rspec-expectations (2.5.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.5.0)
+    sinatra (1.2.1)
       rack (~> 1.1)
-      tilt (~> 1.1)
-    tilt (1.1)
+      tilt (< 2.0, >= 1.2.2)
+    tilt (1.2.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   builder (>= 2.0)
-  bundler (~> 1.0.0)
-  haml (>= 2.0)
+  bundler (~> 1.0.10)
+  haml (>= 3.0)
   rack-test (~> 0.5.6)
   rcov (~> 0.9.8)
-  rspec (~> 2.0.1)
-  sinatra (~> 1.1)
+  rspec (~> 2.5.0)
   sinatra-respond_to!
