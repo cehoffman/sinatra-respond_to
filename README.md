@@ -117,7 +117,7 @@ This task will install any missing dependencies, run the tests/specs, and genera
 
 ## Contributors
 
-* [Ryan Schenk](http://github.com/rschenk/)
+[Contributors](https://github.com/cehoffman/sinatra-respond_to/contributors)
 
 ## LICENSE:
 
