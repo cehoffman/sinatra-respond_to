@@ -320,8 +320,7 @@ describe Sinatra::RespondTo do
       end
 
       it "should not return nil when only content_type sets headers" do
-        settings = mock('settings')
-        settings.should_receive(:default_encoding).and_return('utf-8')
+        settings = mock('settings').as_null_object
         stub!(:settings).and_return(settings)
 
         content_type :xhtml
