@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sinatra-respond_to (0.6.0)
+    sinatra-respond_to (0.7.0)
       sinatra (~> 1.2)
 
 GEM
