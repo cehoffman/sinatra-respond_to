@@ -12,14 +12,14 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = '>= 1.3.6'
 
-  s.add_runtime_dependency 'sinatra', '~> 1.1'
+  s.add_runtime_dependency 'sinatra', '~> 1.2'
 
-  s.add_development_dependency 'rspec', '~> 2.0.1'
+  s.add_development_dependency 'rspec', '~> 2.5.0'
   s.add_development_dependency 'rack-test', '~> 0.5.6'
   s.add_development_dependency 'rcov', '~> 0.9.8'
   s.add_development_dependency 'builder', '>= 2.0'
-  s.add_development_dependency 'haml', '>= 2.0'
-  s.add_development_dependency 'bundler', '~> 1.0.0'
+  s.add_development_dependency 'haml', '>= 3.0'
+  s.add_development_dependency 'bundler', '~> 1.0.10'
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
