@@ -5,7 +5,7 @@ describe Sinatra::RespondTo do
     ::Sinatra::Base.mime_type(sym)
   end
 
-  describe "options" do
+  describe "settings" do
     it "should initialize with :default_content set to :html" do
       TestApp.default_content.should == :html
     end
@@ -341,7 +341,7 @@ describe Sinatra::RespondTo do
         TestApp.disable :static
       end
 
-      def options
+      def settings
         TestApp
       end
 
