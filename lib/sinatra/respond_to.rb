@@ -36,7 +36,7 @@ module Sinatra
         # Let through sinatra image urls in development
         next if self.class.development? && request.path_info =~ %r{/__sinatra__/.*?.png}
 
-        unless options.static? && options.public? && (request.get? || request.head?) && static_file?(request.path_info)
+        unless settings.static? && settings.public? && (request.get? || request.head?) && static_file?(request.path_info)
           if request.params.has_key? 'format'
             format params['format']
           else
@@ -46,7 +46,7 @@ module Sinatra
             # for.
             request.path_info = request.path_info.sub %r{\.([^\./]+)$}, ''
 
-            format $1 || (request.xhr? && options.assume_xhr_is_js? ? :js : options.default_content)
+            format $1 || (request.xhr? && settings.assume_xhr_is_js? ? :js : settings.default_content)
           end
         end
       end
@@ -174,7 +174,7 @@ module Sinatra
       # This is mostly just a helper so request.path_info isn't changed when
       # serving files from the public directory
       def static_file?(path)
-        public_dir = File.expand_path(options.public)
+        public_dir = File.expand_path(settings.public_folder)
         path = File.expand_path(File.join(public_dir, unescape(path)))
 
         path[0, public_dir.length] == public_dir && File.file?(path)
