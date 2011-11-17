@@ -13,7 +13,7 @@ module Sinatra
   module RespondTo
     class UnhandledFormat < Sinatra::NotFound; end
     class MissingTemplate < Sinatra::NotFound
-      def code; 500 end
+      def code; 404 end
     end
 
     def self.registered(app)
@@ -79,7 +79,7 @@ module Sinatra
 
         dev.error MissingTemplate do
           content_type :html, :charset => 'utf-8'
-          response.status = request.env['sinatra.error'].code
+          response.status = 500
 
           engine = request.env['sinatra.error'].message.split('.').last
           engine = 'haml' unless ['haml', 'builder', 'erb'].include? engine
