@@ -197,7 +197,7 @@ describe Sinatra::RespondTo do
       it "should show the /__sinatra__/500.png" do
         get '/missing-template'
 
-        last_response.body.should =~ %r{src='/__sinatra__/500.png'}
+        last_response.body.should =~ %r{src=(?<quote>['"'])/__sinatra__/500.png\k<quote>}
       end
 
       it "should provide a contextual code example for the template engine" do
