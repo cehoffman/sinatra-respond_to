@@ -51,7 +51,7 @@ module Sinatra
         end
       end
 
-     app.configure :development do |dev|
+      app.configure :development do |dev|
         dev.error UnhandledFormat do
           content_type :html, :charset => 'utf-8'
 
