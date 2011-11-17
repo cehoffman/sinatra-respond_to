@@ -123,7 +123,7 @@ This task will install any missing dependencies, run the tests/specs, and genera
 
 (The MIT License)
 
-Copyright (c) 2009-2010 Chris Hoffman
+Copyright (c) 2009-2011 Chris Hoffman
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
