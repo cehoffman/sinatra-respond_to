@@ -128,35 +128,33 @@ module Sinatra
       end
 
       app.class_eval do
-        # Changes in 1.0 Sinatra reuse render for layout so we store the
-        # original value to tell us if this is an automatic attempt to do a
-        # layout call.  If it is, it might fail with Errno::ENOENT and we want
-        # to pass that back to sinatra since it isn't a MissingTemplate error
-        alias :render_without_format :render
-        def render(*args, &block)
-          assumed_layout = args[1] == :layout
-          args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
-          render_without_format *args, &block
-        rescue Errno::ENOENT => e
-          raise MissingTemplate, "#{args[1]}.#{args[0]}" unless assumed_layout
-          raise e
-        end
-        private :render
+        include RenderExtension
       end
+    end
+
+    module RenderExtension
+      # Changes in 1.0 Sinatra reuse render for layout so we store the
+      # original value to tell us if this is an automatic attempt to do a
+      # layout call.  If it is, it might fail with Errno::ENOENT and we want
+      # to pass that back to sinatra since it isn't a MissingTemplate error
+      def render(*args, &block)
+        assumed_layout = args[1] == :layout
+        args[1] = "#{args[1]}.#{format}".to_sym if args[1].is_a?(::Symbol)
+        super(*args, &block)
+      rescue Errno::ENOENT => e
+        raise MissingTemplate, "#{args[1]}.#{args[0]}" unless assumed_layout
+        raise e
+      end
+      private :render
     end
 
     module Helpers
       # Patch the content_type function to remember the set type
       # This helps cut down on time in the format helper so it
       # doesn't have to do a reverse lookup on the header
-      def self.included(klass)
-        klass.class_eval do
-          alias :content_type_without_save :content_type
-          def content_type(*args)
-            @_format = args.first.to_sym
-            content_type_without_save *args
-          end
-        end
+      def content_type(*args)
+        @_format = args.first.to_sym
+        super(*args)
       end
 
       def format(val=nil)
