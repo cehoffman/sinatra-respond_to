@@ -79,9 +79,9 @@ There a few options available for configuring the default behavior of respond\_t
 
 ## REQUIREMENTS:
 
-* sinatra 1.1
+* sinatra 1.3
 
-If you would like to use Sinatra 1.0, use version `0.5.0`.
+If you would like to use Sinatra 1.2, use version `0.7.0`.
 
 ## INSTALL:
 
