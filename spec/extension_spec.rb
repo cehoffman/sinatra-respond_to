@@ -134,6 +134,31 @@ describe Sinatra::RespondTo do
     end
   end
 
+  describe "accept routing" do
+    it "should use a format parameter before sniffing out the accept header" do
+      get "/resource?format=xml", {'HTTP_ACCEPT' => "text/html"}
+      last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+    end
+
+    it "should use an extension before sniffing out the accept header" do
+      get "/resource.xml", {'HTTP_ACCEPT' => "text/html"}
+
+      last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+    end
+
+    it "should render for a template using builder" do
+      get "/resource", {'HTTP_ACCEPT' => "application/xml"}
+
+      last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+    end
+
+    it "should render for a template using erb" do
+      get "/resource", {'HTTP_ACCEPT' => "application/javascript"}
+
+      last_response.body.should =~ %r{'Hiya from javascript'}
+    end
+  end
+
   describe "routes not using respond_to" do
     it "should set the default content type when no extension" do
       get "/normal-no-respond_to"
