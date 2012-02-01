@@ -41,22 +41,28 @@ module Sinatra
             format params['format']
           else
             # Consider first Accept type as default, otherwise
-            # fall back to settings.default_content_type
+            # fall back to settings.default_content
             # Note: this should probably prioritize the accept header and use
             # the first type found in MIME_TYPES
-            default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first] || settings.default_content
+            default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first]
+            default_content = default_content ? default_content[1..-1] : settings.default_content
 
             # Sinatra relies on a side-effect from path_info= to
             # determine its routes. A direct string change (e.g., sub!)
             # would bypass that -- and fail to have the effect we're looking
             # for.
-            request.path_info = request.path_info.sub %r{\.([^\./]+)$}, ''
+            ext = $1 if request.path_info.match(%r{\.([^\./]+)$})
+            if ext
+              request.path_info = request.path_info[0..-(ext.length+2)]
 
-            format $1 || (request.xhr? && settings.assume_xhr_is_js? ? :js : default_content)
+              format ext
 
-            # Rewrite the accept header witht the determined format to allow
-            # downstream middleware to make use the the mime type
-            request.accept.replace [::Sinatra::Base.mime_type(format)]
+              # Rewrite the accept header with the determined format to allow
+              # downstream middleware to make use the the mime type
+              request.accept.unshift ::Sinatra::Base.mime_type(format)
+            else
+              format (request.xhr? && settings.assume_xhr_is_js? ? :js : default_content)
+            end
           end
         end
       end
