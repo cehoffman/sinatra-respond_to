@@ -147,10 +147,21 @@ describe Sinatra::RespondTo do
     end
 
     it "should render for a template using builder" do
-      Rack::Mime::MIME_TYPES[".xsl"] = "application/xsl+xml"  # Mapped poorly in Rack
       get "/resource", {}, {'HTTP_ACCEPT' => "application/xml"}
 
       last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+    end
+
+    it "should render for a template using haml" do
+      get "/resource", {}, {'HTTP_ACCEPT' => "text/html"}
+
+      last_response.body.should =~ %r{\s*<html>\s*<body>Hello from HTML</body>\s*</html>\s*}
+    end
+
+    it "should render for a template using json" do
+      get "/resource", {}, {'HTTP_ACCEPT' => "application/json"}
+
+      last_response.body.should =~ %r{We got some json}
     end
 
     it "should render for a template using erb" do

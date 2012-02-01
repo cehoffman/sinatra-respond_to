@@ -15,6 +15,18 @@ module Sinatra
     class MissingTemplate < Sinatra::NotFound
       def code; 404 end
     end
+    
+    # As MIME_TYPES can have multiple extensions for a given content type
+    # when looking up the format from the ACCEPT header, use prefered formats
+    PREFERED_CONTENT_FORMATS = {
+      "application/octet-stream" => ".bin",
+      "application/postscript"   => ".ps",
+      "text/plain"               => ".txt",
+      "text/html"                => ".html",
+      "image/jpeg"               => ".jpeg",
+      "application/xml"          => ".xml",
+      "text/yaml"                => ".yml",
+    }
 
     def self.registered(app)
       app.helpers RespondTo::Helpers
@@ -44,8 +56,14 @@ module Sinatra
             # fall back to settings.default_content
             # Note: this should probably prioritize the accept header and use
             # the first type found in MIME_TYPES
-            default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first]
-            default_content = default_content ? default_content[1..-1] : settings.default_content
+            default_content = case
+            when PREFERED_CONTENT_FORMATS.has_key?(request.accept.first)
+              PREFERED_CONTENT_FORMATS[request.accept.first][1..-1]
+            when Rack::Mime::MIME_TYPES.invert.has_key?(request.accept.first)
+              Rack::Mime::MIME_TYPES.invert[request.accept.first][1..-1]
+            else
+              settings.default_content
+            end
 
             # Sinatra relies on a side-effect from path_info= to
             # determine its routes. A direct string change (e.g., sub!)
@@ -61,7 +79,7 @@ module Sinatra
               # downstream middleware to make use the the mime type
               request.accept.unshift ::Sinatra::Base.mime_type(format)
             else
-              format (request.xhr? && settings.assume_xhr_is_js? ? :js : default_content)
+              format(request.xhr? && settings.assume_xhr_is_js? ? :js : default_content)
             end
           end
         end
