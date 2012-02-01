@@ -136,24 +136,25 @@ describe Sinatra::RespondTo do
 
   describe "accept routing" do
     it "should use a format parameter before sniffing out the accept header" do
-      get "/resource?format=xml", {'HTTP_ACCEPT' => "text/html"}
+      get "/resource?format=xml", {}, {'HTTP_ACCEPT' => "text/html"}
       last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
     end
 
     it "should use an extension before sniffing out the accept header" do
-      get "/resource.xml", {'HTTP_ACCEPT' => "text/html"}
+      get "/resource.xml", {}, {'HTTP_ACCEPT' => "text/html"}
 
       last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
     end
 
     it "should render for a template using builder" do
-      get "/resource", {'HTTP_ACCEPT' => "application/xml"}
+      Rack::Mime::MIME_TYPES[".xsl"] = "application/xsl+xml"  # Mapped poorly in Rack
+      get "/resource", {}, {'HTTP_ACCEPT' => "application/xml"}
 
       last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
     end
 
     it "should render for a template using erb" do
-      get "/resource", {'HTTP_ACCEPT' => "application/javascript"}
+      get "/resource", {}, {'HTTP_ACCEPT' => "application/javascript"}
 
       last_response.body.should =~ %r{'Hiya from javascript'}
     end
