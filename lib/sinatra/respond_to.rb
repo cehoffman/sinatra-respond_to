@@ -39,6 +39,10 @@ module Sinatra
         unless settings.static? && settings.public_folder? && (request.get? || request.head?) && static_file?(request.path_info)
           if request.params.has_key? 'format'
             format params['format']
+
+            # Rewrite the accept header with the determined format to allow
+            # downstream middleware to make use the the mime type
+            request.accept.unshift ::Sinatra::Base.mime_type(format)
           else
             # Consider first Accept type as default, otherwise
             # fall back to settings.default_content
