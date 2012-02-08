@@ -42,14 +42,18 @@ module Sinatra
 
             # Rewrite the accept header with the determined format to allow
             # downstream middleware to make use the the mime type
-            request.accept.unshift ::Sinatra::Base.mime_type(format)
+            request.accept.replace [::Sinatra::Base.mime_type(format)]
           else
             # Consider first Accept type as default, otherwise
             # fall back to settings.default_content
-            # Note: this should probably prioritize the accept header and use
-            # the first type found in MIME_TYPES
             default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first]
             default_content = default_content ? default_content[1..-1] : settings.default_content
+            
+            # Special case, as the specified default_content may use a different symbol than that
+            # found through lookup based on Content-Type
+            default_content = settings.default_content if
+              default_content != settings.default_content &&
+              ::Sinatra::Base.mime_type(default_content) == ::Sinatra::Base.mime_type(settings.default_content)
 
             # Sinatra relies on a side-effect from path_info= to
             # determine its routes. A direct string change (e.g., sub!)
@@ -63,7 +67,7 @@ module Sinatra
 
               # Rewrite the accept header with the determined format to allow
               # downstream middleware to make use the the mime type
-              request.accept.unshift ::Sinatra::Base.mime_type(format)
+              request.accept.replace [::Sinatra::Base.mime_type(format)]
             else
               format(request.xhr? && settings.assume_xhr_is_js? ? :js : default_content)
             end
@@ -213,8 +217,12 @@ module Sinatra
         yield wants
 
         if wants[format].nil?
-          # Check for equivalent Mime Type match if this particulary format symbol is not found.
-          alt = wants.keys.detect {|k| Rack::Mime::MIME_TYPES[".#{k}"] == Rack::Mime::MIME_TYPES[".#{format}"]}
+          # Loop through request.accept in prioritized order looking for a Mime Type having a format
+          # that is recognized.
+          alt = nil
+          request.accept.each do |mime_type|
+            break if alt = wants.keys.detect {|k| ::Sinatra::Base.mime_type(k) == mime_type}
+          end
           format alt if alt
         end
         raise UnhandledFormat  if wants[format].nil?
