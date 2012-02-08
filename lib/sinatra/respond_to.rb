@@ -42,7 +42,8 @@ module Sinatra
 
             # Rewrite the accept header with the determined format to allow
             # downstream middleware to make use the the mime type
-            request.accept.replace [::Sinatra::Base.mime_type(format)]
+            env['HTTP_ACCEPT'] = ::Sinatra::Base.mime_type(format)
+            request.accept.replace [env['HTTP_ACCEPT']]
           else
             # Consider first Accept type as default, otherwise
             # fall back to settings.default_content
@@ -67,7 +68,8 @@ module Sinatra
 
               # Rewrite the accept header with the determined format to allow
               # downstream middleware to make use the the mime type
-              request.accept.replace [::Sinatra::Base.mime_type(format)]
+              env['HTTP_ACCEPT'] = ::Sinatra::Base.mime_type(format)
+              request.accept.replace [env['HTTP_ACCEPT']]
             else
               format(request.xhr? && settings.assume_xhr_is_js? ? :js : default_content)
             end
