@@ -48,6 +48,8 @@ describe Sinatra::RespondTo do
     it "should use a format parameter before sniffing out the extension" do
       get "/resource?format=xml"
       last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+      last_response.content_type.should include(mime_type(:xml))
+      last_request.env['HTTP_ACCEPT'].should == mime_type(:xml)
     end
 
     it "breaks routes expecting an extension" do
@@ -61,24 +63,31 @@ describe Sinatra::RespondTo do
       get "/resource"
 
       last_response.body.should =~ %r{\s*<html>\s*<body>Hello from HTML</body>\s*</html>\s*}
+      last_response.content_type.should include(mime_type(:html))
     end
 
     it "should render for a template using builder" do
       get "/resource.xml"
 
       last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+      last_response.content_type.should include(mime_type(:xml))
+      last_request.env['HTTP_ACCEPT'].should == mime_type(:xml)
     end
 
     it "should render for a template using erb" do
       get "/resource.js"
 
       last_response.body.should =~ %r{'Hiya from javascript'}
+      last_response.content_type.should include(mime_type(:js))
+      last_request.env['HTTP_ACCEPT'].should == mime_type(:js)
     end
 
     it "should return string literals in block" do
       get "/resource.json"
 
       last_response.body.should =~ %r{We got some json}
+      last_response.content_type.should include(mime_type(:json))
+      last_request.env['HTTP_ACCEPT'].should == mime_type(:json)
     end
 
     # This will fail if the above is failing
@@ -131,6 +140,51 @@ describe Sinatra::RespondTo do
         last_response.should_not be_ok
         last_response.body.should_not == "Unreachable static file"
       end
+    end
+  end
+
+  describe "accept routing" do
+    it "should use a format parameter before sniffing out the accept header" do
+      get "/resource?format=xml", {}, {'HTTP_ACCEPT' => "text/html"}
+      last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+      last_response.content_type.should include(mime_type(:xml))
+      last_request.env['HTTP_ACCEPT'].should == mime_type(:xml)
+    end
+
+    it "should use an extension before sniffing out the accept header" do
+      get "/resource.xml", {}, {'HTTP_ACCEPT' => "text/html"}
+
+      last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+      last_response.content_type.should include(mime_type(:xml))
+      last_request.env['HTTP_ACCEPT'].should == mime_type(:xml)
+    end
+
+    it "should render for a template using builder" do
+      get "/resource", {}, {'HTTP_ACCEPT' => "application/xml"}
+
+      last_response.body.should =~ %r{\s*<root>Some XML</root>\s*}
+      last_response.content_type.should include(mime_type(:xml))
+    end
+
+    it "should render for a template using haml" do
+      get "/resource", {}, {'HTTP_ACCEPT' => "text/html"}
+
+      last_response.body.should =~ %r{\s*<html>\s*<body>Hello from HTML</body>\s*</html>\s*}
+      last_response.content_type.should include(mime_type(:html))
+    end
+
+    it "should render for a template using json" do
+      get "/resource", {}, {'HTTP_ACCEPT' => "application/json"}
+
+      last_response.body.should =~ %r{We got some json}
+      last_response.content_type.should include(mime_type(:json))
+    end
+
+    it "should render for a template using erb" do
+      get "/resource", {}, {'HTTP_ACCEPT' => "application/javascript"}
+
+      last_response.body.should =~ %r{'Hiya from javascript'}
+      last_response.content_type.should include(mime_type(:js))
     end
   end
 

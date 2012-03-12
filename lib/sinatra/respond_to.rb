@@ -15,7 +15,7 @@ module Sinatra
     class MissingTemplate < Sinatra::NotFound
       def code; 404 end
     end
-
+    
     def self.registered(app)
       app.helpers RespondTo::Helpers
 
@@ -39,14 +39,40 @@ module Sinatra
         unless settings.static? && settings.public_folder? && (request.get? || request.head?) && static_file?(request.path_info)
           if request.params.has_key? 'format'
             format params['format']
+
+            # Rewrite the accept header with the determined format to allow
+            # downstream middleware to make use the the mime type
+            env['HTTP_ACCEPT'] = ::Sinatra::Base.mime_type(format)
+            request.accept.replace [env['HTTP_ACCEPT']]
           else
+            # Consider first Accept type as default, otherwise
+            # fall back to settings.default_content
+            default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first]
+            default_content = default_content ? default_content[1..-1] : settings.default_content
+            
+            # Special case, as the specified default_content may use a different symbol than that
+            # found through lookup based on Content-Type
+            default_content = settings.default_content if
+              default_content != settings.default_content &&
+              ::Sinatra::Base.mime_type(default_content) == ::Sinatra::Base.mime_type(settings.default_content)
+
             # Sinatra relies on a side-effect from path_info= to
             # determine its routes. A direct string change (e.g., sub!)
             # would bypass that -- and fail to have the effect we're looking
             # for.
-            request.path_info = request.path_info.sub %r{\.([^\./]+)$}, ''
+            ext = $1 if request.path_info.match(%r{\.([^\./]+)$})
+            if ext
+              request.path_info = request.path_info[0..-(ext.length+2)]
 
-            format $1 || (request.xhr? && settings.assume_xhr_is_js? ? :js : settings.default_content)
+              format ext
+
+              # Rewrite the accept header with the determined format to allow
+              # downstream middleware to make use the the mime type
+              env['HTTP_ACCEPT'] = ::Sinatra::Base.mime_type(format)
+              request.accept.replace [env['HTTP_ACCEPT']]
+            else
+              format(request.xhr? && settings.assume_xhr_is_js? ? :js : default_content)
+            end
           end
         end
       end
@@ -192,6 +218,15 @@ module Sinatra
 
         yield wants
 
+        if wants[format].nil?
+          # Loop through request.accept in prioritized order looking for a Mime Type having a format
+          # that is recognized.
+          alt = nil
+          request.accept.each do |mime_type|
+            break if alt = wants.keys.detect {|k| ::Sinatra::Base.mime_type(k) == mime_type}
+          end
+          format alt if alt
+        end
         raise UnhandledFormat  if wants[format].nil?
         wants[format].call
       end
