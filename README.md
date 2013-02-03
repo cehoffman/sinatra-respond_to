@@ -10,6 +10,8 @@ A respond\_to style Rails block for baked-in web service support in Sinatra
 
 * Handles setting the content type depending on what is being served
 * Automatically can adjust XMLHttpRequests to return Javascript
+* Recognizes requests based on HTTP\_ACCEPT header parsing. Order of
+  priority is `format` parameter, extension, accept header, default content.
 
 ## SYNOPSIS:
 
@@ -17,7 +19,7 @@ Allows urls of the form **/posts**, **/posts.rss**, and **/posts?format=atom** t
 
     require 'sinatra'
     require 'sinatra/respond_to'
-    
+
     Sinatra::Application.register Sinatra::RespondTo
 
     get '/posts' do
@@ -123,7 +125,7 @@ This task will install any missing dependencies, run the tests/specs, and genera
 
 (The MIT License)
 
-Copyright (c) 2009-2011 Chris Hoffman
+Copyright (c) 2009-2013 Chris Hoffman
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
