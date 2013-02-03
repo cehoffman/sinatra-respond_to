@@ -6,7 +6,7 @@ module Sinatra
     class MissingTemplate < Sinatra::NotFound
       def code; 404 end
     end
-    
+
     def self.registered(app)
       app.helpers RespondTo::Helpers
 
@@ -40,7 +40,7 @@ module Sinatra
             # fall back to settings.default_content
             default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first]
             default_content = default_content ? default_content[1..-1] : settings.default_content
-            
+
             # Special case, as the specified default_content may use a different symbol than that
             # found through lookup based on Content-Type
             default_content = settings.default_content if
