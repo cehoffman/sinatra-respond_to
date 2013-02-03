@@ -1,14 +1,5 @@
 require 'sinatra/base'
 
-# Accept header parsing was looked at but deemed
-# too much of an irregularity to deal with.  Problems with the header
-# differences from IE, Firefox, Safari, and every other UA causes
-# problems with the expected output.  The general expected behavior
-# would be serve html when no extension provided, but most UAs say
-# they will accept application/xml with out a quality indicator, meaning
-# you'd get the xml block served insead.  Just plain retarded, use the
-# extension and you'll never be suprised.
-
 module Sinatra
   module RespondTo
     class UnhandledFormat < Sinatra::NotFound; end
@@ -56,12 +47,11 @@ module Sinatra
               default_content != settings.default_content &&
               ::Sinatra::Base.mime_type(default_content) == ::Sinatra::Base.mime_type(settings.default_content)
 
-            # Sinatra relies on a side-effect from path_info= to
-            # determine its routes. A direct string change (e.g., sub!)
-            # would bypass that -- and fail to have the effect we're looking
-            # for.
             ext = $1 if request.path_info.match(%r{\.([^\./]+)$})
             if ext
+              # Sinatra relies on a side-effect from path_info= to determine
+              # its routes. A direct string change (e.g., sub!) would bypass
+              # that and fail to have the effect we're looking for.
               request.path_info = request.path_info[0..-(ext.length+2)]
 
               format ext
