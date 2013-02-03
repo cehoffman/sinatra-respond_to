@@ -9,6 +9,12 @@ begin
     t.rcov_opts = ['--sort coverage --text-summary --sort-reverse']
     t.rcov_opts << "--comments --exclude spec,pkg,#{ENV['GEM_HOME']}"
   end
+
+  desc 'Run tests with coverage'
+  task :coverage do
+    ENV['COVERAGE'] = 'true'
+    Rake::Task['spec'].invoke
+  end
 rescue LoadError
   puts 'RSpec not available, try a bundle install'
 end

@@ -4,6 +4,11 @@ require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
 require 'rack/test'
+require 'simplecov'
+
+SimpleCov.start do
+  add_filter 'vendor'
+end if ENV['COVERAGE']
 
 require File.join(File.dirname(__FILE__), '..', 'lib', 'sinatra', 'respond_to')
 require File.join(File.dirname(__FILE__), 'app', 'test_app')

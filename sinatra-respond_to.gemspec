@@ -10,17 +10,15 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/cehoffman/sinatra-respond_to'
   s.summary     = 'A respond_to style Rails block for baked-in web service support in Sinatra'
 
-  s.required_rubygems_version = '>= 1.3.6'
-
   s.add_runtime_dependency 'sinatra', '~> 1.3'
 
-  s.add_development_dependency 'rspec', '~> 2.5.0'
-  s.add_development_dependency 'rack-test', '~> 0.5.6'
-  s.add_development_dependency 'rcov', '~> 0.9.8'
+  s.add_development_dependency 'rspec', '~> 2.12.0'
+  s.add_development_dependency 'rack-test', '~> 0.6.2'
+  s.add_development_dependency 'simplecov', '~> 0.7.1'
   s.add_development_dependency 'builder', '>= 2.0'
   s.add_development_dependency 'haml', '>= 3.0'
   s.add_development_dependency 'sass', '>= 3.0'
-  s.add_development_dependency 'bundler', '~> 1.1.rc'
+  s.add_development_dependency 'bundler', '~> 1.2'
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
