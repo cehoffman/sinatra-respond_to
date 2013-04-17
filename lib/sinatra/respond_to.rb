@@ -36,9 +36,11 @@ module Sinatra
             env['HTTP_ACCEPT'] = ::Sinatra::Base.mime_type(format)
             request.accept.replace [env['HTTP_ACCEPT']]
           else
+
+
             # Consider first Accept type as default, otherwise
             # fall back to settings.default_content
-            default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first]
+            default_content = Rack::Mime::MIME_TYPES.invert[request.accept.first.to_s]
             default_content = default_content ? default_content[1..-1] : settings.default_content
 
             # Special case, as the specified default_content may use a different symbol than that

@@ -3,14 +3,14 @@ require File.expand_path('../lib/sinatra/respond_to/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = 'sinatra-respond_to'
-  s.version     = Sinatra::RespondTo::Version
+  s.version     = Sinatra::RespondTo::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Chris Hoffman']
   s.email       = ['cehoffman@gmail.com']
   s.homepage    = 'http://github.com/cehoffman/sinatra-respond_to'
   s.summary     = 'A respond_to style Rails block for baked-in web service support in Sinatra'
 
-  s.add_runtime_dependency 'sinatra', '~> 1.3'
+  s.add_runtime_dependency 'sinatra', '~> 1.4'
 
   s.add_development_dependency 'rspec', '~> 2.12.0'
   s.add_development_dependency 'rack-test', '~> 0.6.2'
