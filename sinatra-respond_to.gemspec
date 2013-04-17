@@ -3,7 +3,7 @@ require File.expand_path('../lib/sinatra/respond_to/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = 'sinatra-respond_to'
-  s.version     = Sinatra::RespondTo::Version
+  s.version     = Sinatra::RespondTo::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Chris Hoffman']
   s.email       = ['cehoffman@gmail.com']
