@@ -6,6 +6,12 @@ require 'rspec'
 require 'rack/test'
 require 'simplecov'
 
+begin
+  require "debugger"
+rescue LoadError => _
+  # NOP
+end
+
 SimpleCov.start do
   add_filter 'vendor'
 end if ENV['COVERAGE']
