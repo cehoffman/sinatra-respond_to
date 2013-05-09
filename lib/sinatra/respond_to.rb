@@ -215,7 +215,11 @@ module Sinatra
           request.accept.each do |mime_type|
             break if alt = wants.keys.detect {|k| ::Sinatra::Base.mime_type(k) == mime_type}
           end
-          format alt if alt
+          if alt
+            format alt
+          elsif request.accept.include?("*.*")
+            format settings.default_content
+          end
         end
         raise UnhandledFormat  if wants[format].nil?
         wants[format].call

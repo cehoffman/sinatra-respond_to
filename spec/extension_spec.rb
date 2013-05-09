@@ -186,6 +186,12 @@ describe Sinatra::RespondTo do
       last_response.body.should =~ %r{'Hiya from javascript'}
       last_response.content_type.should include(mime_type(:js))
     end
+
+    it "should use default_content when the first Accept header includes the wildcard" do
+      get "/resource", {}, {'HTTP_ACCEPT' => "text/csv;q=0.9,*.*;q=0.8"}
+      last_response.body.should =~ %r{\s*<html>\s*<body>Hello from HTML</body>\s*</html>\s*}
+      last_response.content_type.should include(mime_type(:html))
+    end
   end
 
   describe "routes not using respond_to" do
