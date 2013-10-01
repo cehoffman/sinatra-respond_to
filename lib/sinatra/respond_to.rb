@@ -169,7 +169,7 @@ module Sinatra
       def format(val=nil)
         unless val.nil?
           mime_type = ::Sinatra::Base.mime_type(val)
-          fail "Unknown media type #{val}\nTry registering the extension with a mime type" if mime_type.nil?
+          raise UnhandledFormat.new("Unknown media type #{val}\nTry registering the extension with a mime type") if mime_type.nil?
 
           @_format = val.to_sym
           response['Content-Type'] ? response['Content-Type'].sub!(/^[^;]+/, mime_type) : content_type(@_format)
@@ -188,7 +188,7 @@ module Sinatra
       end
 
       def charset(val=nil)
-        fail "Content-Type must be set in order to specify a charset" if response['Content-Type'].nil?
+        raise UnhandledFormat.new("Content-Type must be set in order to specify a charset") if response['Content-Type'].nil?
 
         if response['Content-Type'] =~ /charset=[^;]+/
           response['Content-Type'].sub!(/charset=[^;]+/, (val == '' && '') || "charset=#{val}")
@@ -202,7 +202,7 @@ module Sinatra
       def respond_to(&block)
         wants = {}
         def wants.method_missing(type, *args, &handler)
-          ::Sinatra::Base.send(:fail, "Unknown media type for respond_to: #{type}\nTry registering the extension with a mime type") if ::Sinatra::Base.mime_type(type).nil?
+          ::Sinatra::RespondTo::UnhandledFormat.new("Unknown media type for respond_to: #{type}\nTry registering the extension with a mime type") if ::Sinatra::Base.mime_type(type).nil?
           self[type] = handler
         end
 
