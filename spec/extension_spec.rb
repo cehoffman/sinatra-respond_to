@@ -329,10 +329,10 @@ describe Sinatra::RespondTo do
         charset.should == 'utf-8'
       end
 
-      it "should fail when the response does not have a Content-Type" do
+      it "should fail with UnhandledFormat when the response does not have a Content-Type" do
         response.delete('Content-Type')
 
-        lambda { charset }.should raise_error
+        lambda { charset }.should raise_error(Sinatra::RespondTo::UnhandledFormat)
       end
 
       it "should not modify the Content-Type when given no argument" do
@@ -355,8 +355,8 @@ describe Sinatra::RespondTo do
         response['Content-Type'].split(';').should include(mime_type(:xml))
       end
 
-      it "should fail when set to an unknown extension type" do
-        lambda { format :bogus }.should raise_error
+      it "should fail with UnhandledFormat when set to an unknown extension type" do
+        lambda { format :bogus }.should raise_error(Sinatra::RespondTo::UnhandledFormat)
       end
 
       it "should return the current mime type extension" do
@@ -421,12 +421,12 @@ describe Sinatra::RespondTo do
         stub!(:request).and_return(Sinatra::Request.new({}))
       end
 
-      it "should fail for an unknown extension" do
+      it "should fail with UnhandledFormat for an unknown extension" do
         lambda do
           respond_to do |wants|
             wants.bogus
           end
-        end.should raise_error
+        end.should raise_error(Sinatra::RespondTo::UnhandledFormat)
       end
 
       it "should call the block corresponding to the current format" do
