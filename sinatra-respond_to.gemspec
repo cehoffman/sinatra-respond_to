@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/cehoffman/sinatra-respond_to'
   s.summary     = 'A respond_to style Rails block for baked-in web service support in Sinatra'
 
-  s.add_runtime_dependency 'sinatra', '~> 1.3'
+  s.add_runtime_dependency 'sinatra', '>= 1.3', '< 4.0'
 
   s.add_development_dependency 'rspec', '~> 2.12.0'
   s.add_development_dependency 'rack-test', '~> 0.6.2'
